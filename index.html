@@ -189,24 +189,31 @@ function fc(headers,...terms){
   return headers.find(h=>terms.some(t=>h.toLowerCase().includes(t.toLowerCase())))||'';
 }
 
+function setStatus(msg){const el=document.getElementById("ss-msg");if(el)el.textContent=msg;}
 async function init(){
-  document.getElementById('app').innerHTML='<div class="state"><div class="spinner"></div><div class="st">A carregar dados</div><div class="ss">A ligar ao Google Sheets via CSV publicado...</div></div>';
-  document.getElementById('tbar').style.display='none';
-  document.getElementById('ldot').style.display='none';
+  document.getElementById("app").innerHTML='<div class="state"><div class="spinner"></div><div class="st">A carregar dados</div><div class="ss" id="ss-msg">A ligar ao Google Sheets...</div></div>';
+  document.getElementById("tbar").style.display="none";
+  document.getElementById("ldot").style.display="none";
   if(CI){try{CI.destroy();}catch(e){}CI=null;}
   try{
+    setStatus("A descarregar CSV (~5MB)...");
     const[t1,t2]=await Promise.all([fetchCSV(CSV_RAW),fetchCSV(CSV_KPI)]);
+    setStatus("A processar dados RAW...");
+    await new Promise(r=>setTimeout(r,10));
     RAW=cleanRows(parseCSV(t1));
+    setStatus("A processar KPI...");
+    await new Promise(r=>setTimeout(r,10));
     KPI=cleanRows(parseCSV(t2));
-    if(RAW.length<2||KPI.length<2) throw new Error('Ficheiros CSV vazios ou sem dados.');
-
-    document.getElementById('hsub').textContent=`Actualizado às ${new Date().toLocaleTimeString('pt-PT')}`;
-    document.getElementById('ldot').style.display='block';
-    document.getElementById('tbar').style.display='block';
-    ls='';lp=0;ts='';tp=0;ds='';dp=0;
-    showTab('raw');
+    if(RAW.length<2||KPI.length<2) throw new Error("Ficheiros CSV vazios ou sem dados.");
+    setStatus("A calcular KPIs...");
+    await new Promise(r=>setTimeout(r,10));
+    document.getElementById("hsub").textContent=`Actualizado às ${new Date().toLocaleTimeString("pt-PT")} · ${(RAW.length-1).toLocaleString("pt-PT")} registos`;
+    document.getElementById("ldot").style.display="block";
+    document.getElementById("tbar").style.display="block";
+    ls="";lp=0;ts="";tp=0;ds="";dp=0;
+    showTab("raw");
   }catch(e){
-    document.getElementById('app').innerHTML=`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que os ficheiros CSV estão publicados na web via <strong>Ficheiro → Publicar na Web → CSV</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
+    document.getElementById("app").innerHTML=`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que os ficheiros CSV estão publicados na web via <strong>Ficheiro → Publicar na Web → CSV</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
   }
 }
 
