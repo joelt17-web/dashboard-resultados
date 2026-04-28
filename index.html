@@ -229,30 +229,28 @@ function renderRaw(){
   const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
   const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
 
-  // Invalid values to exclude — flexible matching
-  // Explicit blocklist
-  const BLOCK_ATYPES=['i5','i7','i3','thin client','5cg9310dg6','0'];
+  // WHITELIST — only exact matches allowed (case-insensitive)
+  const VALID_ASSET_TYPES = new Set([
+    'armário','banco corrido','bloco gavetas','cadeira','cadeira de cafeteria',
+    'desktop','diversos','docks','mesa','mesa de cafeteria','minipc','mobiliário',
+    'monitor','móvel standard','outros','portátil','posto de trabalho','routers',
+    'secretária','tablets','thin client',"tv's (wallboard)"
+  ]);
   function isValidAssetType(v){
     if(!v)return false;
-    const s=v.trim().toLowerCase();
-    if(BLOCK_ATYPES.includes(s))return false;
-    if(s.startsWith('project -'))return false;
-    if(/^\d+$/.test(s))return false; // pure numbers
-    if(s.length>=8&&!/\s/.test(s)&&/\d/.test(s)&&/[a-z]/i.test(s))return false; // alphanumeric codes like 5CG9310DG6
-    return s.length>0;
+    return VALID_ASSET_TYPES.has(v.trim().toLowerCase());
   }
+  const VALID_LOC_TYPES = new Set([
+    'apartamentos','armazém','avt','edificios','staging','waha','warehouse'
+  ]);
   function isValidLocType(v){
     if(!v)return false;
-    const s=v.trim().toLowerCase();
-    if(!s)return false;
-    if(s.includes('#'))return false;
-    if(s==='sem info'||s==='mais de 3 anos'||s==='menos de 3 anos'||s==='mais 3 anos'||s==='menos 3 anos')return false;
-    if(/^(sem|s\/|n\/a|na$|none|null|undefined)/.test(s))return false;
-    return true;
+    return VALID_LOC_TYPES.has(v.trim().toLowerCase());
   }
 
   // PC types filter for section 5
-  const PC_TYPES=/^(thin.?client|portátil|portatil|minipc|mini.?pc|desktop)$/i;
+  const PC_TYPES_SET=new Set(['thin client','portátil','minipc','desktop']);
+  function isPCType(v){return PC_TYPES_SET.has((v||'').trim().toLowerCase());}
 
   // Collect all unique valid Asset Types
   const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
@@ -306,8 +304,8 @@ function renderRaw(){
   const totalWahaAssets=wahaTerminated.length;
 
   // ── 5. PC ASSETS × LIFE CYCLE ──
-  // LC values in the file are literally: "mais 3 anos" (over 3) or "menos 3 anos" (under 3)
-  const pcData=data.filter(r=>PC_TYPES.test((r[ATYPE]||'').trim()));
+  // Valores literais no ficheiro: "mais 3 anos" = > 3 anos | "menos 3 anos" = ≤ 3 anos
+  const pcData=data.filter(r=>isPCType((r[ATYPE]||'').trim()));
   const dmap={};
   pcData.forEach(r=>{
     const desc=(r[ATYPE]||'').trim()||'(sem tipo)';
@@ -315,16 +313,9 @@ function renderRaw(){
     if(!dmap[desc])dmap[desc]={total:0,over3:0,under3:0,unk:0};
     dmap[desc].total++;
     if(!lc){dmap[desc].unk++;return;}
-    if(lc.includes('mais')){dmap[desc].over3++;}
-    else if(lc.includes('menos')){dmap[desc].under3++;}
-    else{
-      // fallback: try numeric (negative = older)
-      const num=parseFloat(lc.replace(/[^\d.\-]/g,'').replace(',','.'));
-      if(!isNaN(num)){
-        if(num<-3){dmap[desc].over3++;}
-        else{dmap[desc].under3++;}
-      } else {dmap[desc].unk++;}
-    }
+    if(lc==='mais 3 anos'){dmap[desc].over3++;}
+    else if(lc==='menos 3 anos'){dmap[desc].under3++;}
+    else{dmap[desc].unk++;}
   });
   const dlist=Object.entries(dmap).sort((a,b)=>b[1].total-a[1].total);
 
