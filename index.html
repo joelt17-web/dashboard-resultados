@@ -322,18 +322,23 @@ function renderRaw(){
   const tlist=Object.values(tmap).sort((a,b)=>a.name.localeCompare(b.name));
   const totalWahaAssets=wahaTerminated.length;
 
-  // ── 5. PC ASSETS × LOCATION TYPE ──
+  // ── 5. PC ASSETS × LOCATION TYPE × ASSET TYPE × LIFE CYCLE ──
   const pcData=data.filter(r=>isPCType((r[ATYPE]||'').trim()));
   const pcLocTypes=[...new Set(pcData.map(r=>(r[LOC]||'').trim()).filter(isValidLocType))].sort();
+  const pcATypes=[...new Set(pcData.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
+  // dmap: { locType: { assetType: { over3, under3, unk } } }
   const dmap={};
+  pcLocTypes.forEach(l=>{dmap[l]={};pcATypes.forEach(a=>{dmap[l][a]={over3:0,under3:0,unk:0};});});
   pcData.forEach(r=>{
-    const descOrig=(r[ATYPE]||'').trim()||'(sem tipo)';
     const loc=(r[LOC]||'').trim();
-    if(!dmap[descOrig])dmap[descOrig]={total:0,locs:{}};
-    dmap[descOrig].total++;
-    if(isValidLocType(loc))dmap[descOrig].locs[loc]=(dmap[descOrig].locs[loc]||0)+1;
+    const at=(r[ATYPE]||'').trim();
+    if(!isValidLocType(loc)||!isValidAssetType(at))return;
+    const lc=norm(r[LC]||'');
+    if(lc==='mais 3 anos')dmap[loc][at].over3++;
+    else if(lc==='menos 3 anos')dmap[loc][at].under3++;
+    else dmap[loc][at].unk++;
   });
-  const dlist=Object.entries(dmap).sort((a,b)=>b[1].total-a[1].total);
+  const pcLocTotal=pcLocTypes.reduce((s,l)=>s+pcATypes.reduce((ss,a)=>ss+dmap[l][a].over3+dmap[l][a].under3+dmap[l][a].unk,0),0);
 
   // ════ RENDER ════
   let h='<div class="fade">';
@@ -419,32 +424,52 @@ function renderRaw(){
     <button class="pb" onclick="tp++;renderRaw()" ${tp>=tpages-1?'disabled':''}>Seg →</button></div>`;
   h+=`</div></div><div class="div"></div>`;
 
-  // ── 5. PC ASSETS × LOCATION TYPE ──
-  h+=`<div class="sec"><div class="sec-lbl">5 · PCs — Asset Type e Distribuição por Location Type</div>
+  // ── 5. PC ASSETS × LOCATION TYPE × ASSET TYPE × LIFE CYCLE ──
+  // Colunas: para cada Asset Type → ≤3 anos | >3 anos
+  const colSpan=pcATypes.length*2;
+  h+=`<div class="sec"><div class="sec-lbl">5 · PCs — Life Cycle por Location Type e Asset Type</div>
   <div class="panel">
-    <div class="ph"><span class="ph-title">Apenas assets de tipo PC</span><span class="ph-cnt">${pcData.length} assets</span></div>
-    <div class="tw"><table><thead><tr><th>Asset Type</th><th class="tr">Total</th>`;
-  pcLocTypes.forEach(l=>{ h+=`<th class="tr">${l}</th>`; });
-  h+=`<th class="tr">Sem loc.</th></tr></thead><tbody>`;
-  dlist.forEach(([k,v])=>{
-    const semLoc=v.total-pcLocTypes.reduce((s,l)=>s+(v.locs[l]||0),0);
-    h+=`<tr><td>${k}</td><td class="tr" style="font-weight:600">${v.total}</td>`;
-    pcLocTypes.forEach(l=>{
-      const n=v.locs[l]||0;
-      const pct=v.total?Math.round(n/v.total*100):0;
-      h+=`<td class="tr">${n}<span style="color:var(--text3);font-size:11px"> (${pct}%)</span></td>`;
+    <div class="ph"><span class="ph-title">PCs com localização válida</span><span class="ph-cnt">${pcLocTotal} assets</span></div>
+    <div class="tw"><table><thead>
+    <tr>
+      <th rowspan="2">Location Type</th>
+      <th class="tr" rowspan="2">Total</th>`;
+  pcATypes.forEach(a=>{
+    h+=`<th class="tr" colspan="2" style="border-left:2px solid var(--border2)">${a}</th>`;
+  });
+  h+=`</tr><tr>`;
+  pcATypes.forEach(()=>{
+    h+=`<th class="tr" style="color:var(--green);border-left:2px solid var(--border2)">≤ 3a</th><th class="tr" style="color:var(--red)">&gt; 3a</th>`;
+  });
+  h+=`</tr></thead><tbody>`;
+  pcLocTypes.forEach(l=>{
+    const locTot=pcATypes.reduce((s,a)=>s+dmap[l][a].over3+dmap[l][a].under3+dmap[l][a].unk,0);
+    if(!locTot)return;
+    h+=`<tr><td>${l}</td><td class="tr" style="font-weight:600">${locTot}</td>`;
+    pcATypes.forEach(a=>{
+      const v=dmap[l][a];
+      const tot=v.over3+v.under3+v.unk;
+      const u3P=tot?Math.round(v.under3/tot*100):0;
+      const o3P=tot?Math.round(v.over3/tot*100):0;
+      h+=`<td class="tr" style="color:var(--green);border-left:2px solid var(--border2)">${v.under3}<span style="color:var(--text3);font-size:10px"> (${u3P}%)</span></td>`;
+      h+=`<td class="tr" style="color:var(--red)">${v.over3}<span style="color:var(--text3);font-size:10px"> (${o3P}%)</span></td>`;
     });
-    h+=`<td class="tr" style="color:var(--text3)">${semLoc}</td></tr>`;
+    h+=`</tr>`;
   });
   // Totals row
-  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td><td class="tr">${pcData.length}</td>`;
-  pcLocTypes.forEach(l=>{
-    const tot=dlist.reduce((s,[,v])=>s+(v.locs[l]||0),0);
-    h+=`<td class="tr">${tot}</td>`;
+  const totLocTotal=pcLocTotal;
+  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td><td class="tr">${totLocTotal}</td>`;
+  pcATypes.forEach(a=>{
+    const totU=pcLocTypes.reduce((s,l)=>s+dmap[l][a].under3,0);
+    const totO=pcLocTypes.reduce((s,l)=>s+dmap[l][a].over3,0);
+    const atTot=pcLocTypes.reduce((s,l)=>s+dmap[l][a].over3+dmap[l][a].under3+dmap[l][a].unk,0);
+    const uP=atTot?Math.round(totU/atTot*100):0;
+    const oP=atTot?Math.round(totO/atTot*100):0;
+    h+=`<td class="tr" style="color:var(--green);border-left:2px solid var(--border2)">${totU}<span style="font-weight:400;color:var(--text3);font-size:10px"> (${uP}%)</span></td>`;
+    h+=`<td class="tr" style="color:var(--red)">${totO}<span style="font-weight:400;color:var(--text3);font-size:10px"> (${oP}%)</span></td>`;
   });
-  const totSemLoc=dlist.reduce((s,[,v])=>s+(v.total-pcLocTypes.reduce((ss,l)=>ss+(v.locs[l]||0),0)),0);
-  h+=`<td class="tr">${totSemLoc}</td></tr>`;
-  if(!dlist.length)h+=`<tr><td colspan="${pcLocTypes.length+3}" style="text-align:center;color:var(--text3);padding:1.5rem">Sem assets de tipo PC encontrados.</td></tr>`;
+  h+=`</tr>`;
+  if(!pcLocTypes.length)h+=`<tr><td colspan="${colSpan+2}" style="text-align:center;color:var(--text3);padding:1.5rem">Sem assets de tipo PC encontrados.</td></tr>`;
   h+=`</tbody></table></div></div></div></div>`;
 
   document.getElementById('app').innerHTML=h;
