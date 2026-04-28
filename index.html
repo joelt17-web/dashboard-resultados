@@ -384,34 +384,82 @@ function badgeFor(val) {
   return null;
 }
 
-// ── FETCH SHEETS LIST ─────────────────────────────────────────
+// ── GOOGLE VISUALIZATION API (suporta CORS) ───────────────────
+function gvizQuery(sheetName) {
+  return new Promise((resolve, reject) => {
+    const cbName = '_gviz_cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    const sheetParam = sheetName ? `&sheet=${encodeURIComponent(sheetName)}` : '';
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&tq=select+*${sheetParam}&callback=${cbName}`;
+    const script = document.createElement('script');
+    const timer = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 10000);
+    function cleanup() { clearTimeout(timer); delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script); }
+    window[cbName] = (data) => { cleanup(); resolve(data); };
+    script.onerror = () => { cleanup(); reject(new Error('Script error')); };
+    script.src = url;
+    document.head.appendChild(script);
+  });
+}
+
+function gvizToRows(data) {
+  if (!data || !data.table) return [];
+  const cols = data.table.cols || [];
+  const rows = data.table.rows || [];
+  const headers = cols.map(c => c.label || c.id || '');
+  if (!headers.some(h => h)) return [];
+  const dataRows = rows.map(r =>
+    (r.c || []).map((cell, i) => {
+      if (!cell || cell.v === null || cell.v === undefined) return '';
+      if (cell.f) return cell.f; // formatted value (preserves original text)
+      return String(cell.v);
+    })
+  );
+  return [headers, ...dataRows];
+}
+
+// Known sheet names to try — will be updated dynamically
+let knownSheetNames = ['Sheet1','Folha1','Folha 1','Data','Dados','KPIs','Equipamentos','Pessoas','Resultados'];
+
 async function fetchSheetsList() {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
-  const r = await fetch(url);
-  const html = await r.text();
-  // Extract title
-  const titleMatch = html.match(/<title>([^<]+)<\/title>/);
-  if (titleMatch) {
-    const t = titleMatch[1].replace(' - Google Sheets','').trim();
-    document.getElementById('main-title').textContent = t || 'Dashboard de Resultados';
-  }
+  // Try to get sheet names via the spreadsheet feed
+  try {
+    const data = await gvizQuery('');
+    if (data && data.table) {
+      // Success — we have at least the first sheet
+      // Try to get sheet names from the response
+      const title = (data.properties && data.properties.title) || 'Dashboard de Resultados';
+      document.getElementById('main-title').textContent = title;
+    }
+  } catch(e) {}
+
+  // Probe all candidate sheet names in parallel
+  const candidates = [...new Set(knownSheetNames)];
+  const results = await Promise.allSettled(candidates.map(name => gvizQuery(name)));
   const sheets = [];
-  const re = /"sheetId":(\d+),"title":"([^"]+)"/g;
-  let m; const seen = new Set();
-  while ((m = re.exec(html)) !== null) {
-    if (!seen.has(m[1])) { seen.add(m[1]); sheets.push({ gid: m[1], name: m[2] }); }
+  results.forEach((r, i) => {
+    if (r.status === 'fulfilled' && r.value && r.value.table && r.value.table.rows && r.value.table.rows.length > 0) {
+      sheets.push({ name: candidates[i], gid: candidates[i], _data: r.value });
+    }
+  });
+
+  if (!sheets.length) {
+    // Fallback: try empty sheet name (loads first sheet)
+    try {
+      const data = await gvizQuery('');
+      if (data && data.table && data.table.rows && data.table.rows.length > 0) {
+        sheets.push({ name: 'Folha1', gid: '', _data: data });
+      }
+    } catch(e) {}
   }
-  return sheets.length ? sheets : [{ gid:'0', name:'Folha1' }];
+
+  return sheets;
 }
 
-async function fetchSheetCSV(gid) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
-  const r = await fetch(url);
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  return await r.text();
+async function fetchSheetCSV(gid, cachedData) {
+  if (cachedData) return gvizToRows(cachedData);
+  const data = await gvizQuery(gid);
+  return gvizToRows(data);
 }
 
-// ── MAIN LOAD ─────────────────────────────────────────────────
 async function loadData() {
   document.getElementById('main-content').innerHTML = `
     <div class="state-screen">
@@ -429,8 +477,7 @@ async function loadData() {
     allSheets = [];
     for (const s of sheetList) {
       try {
-        const csv = await fetchSheetCSV(s.gid);
-        const rows = parseCSV(csv);
+        const rows = await fetchSheetCSV(s.gid, s._data);
         const validRows = rows.filter(r => r.some(c => c !== ''));
         if (validRows.length >= 1) allSheets.push({ name: s.name, gid: s.gid, rows: validRows });
       } catch(e) { console.warn('Folha ignorada:', s.name, e); }
@@ -450,7 +497,7 @@ async function loadData() {
       <div class="state-screen">
         <div class="error-icon">⚠️</div>
         <div class="state-title">Não foi possível carregar os dados</div>
-        <div class="state-sub">${e.message}<br><br>Confirma que o ficheiro está partilhado como <strong>"Qualquer pessoa com o link pode ver"</strong>.</div>
+        <div class="state-sub">${e.message}<br><br>Confirma que o ficheiro está partilhado como <strong>"Qualquer pessoa com o link pode ver"</strong>.<br><br>Se o problema persistir, partilha os nomes das folhas do teu ficheiro Excel para eu as configurar.</div>
         <button class="btn btn-solid" onclick="loadData()">Tentar novamente</button>
       </div>`;
   }
