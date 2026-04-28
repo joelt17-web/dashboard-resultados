@@ -4,718 +4,533 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard de Resultados</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --surface2: #f0efe9;
-    --border: rgba(0,0,0,0.08);
-    --border2: rgba(0,0,0,0.14);
-    --text: #1a1917;
-    --text2: #6b6a65;
-    --text3: #9c9b96;
-    --accent: #1a1917;
-    --accent-light: #e8e7e1;
-    --blue: #2563eb;
-    --blue-bg: #eff6ff;
-    --blue-text: #1d4ed8;
-    --green: #16a34a;
-    --green-bg: #f0fdf4;
-    --green-text: #15803d;
-    --amber: #d97706;
-    --amber-bg: #fffbeb;
-    --amber-text: #b45309;
-    --red: #dc2626;
-    --red-bg: #fef2f2;
-    --red-text: #b91c1c;
-    --radius: 10px;
-    --radius-lg: 14px;
-  }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 15px;
-    line-height: 1.5;
-  }
-
-  /* HEADER */
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    gap: 1rem;
-  }
-  .header-left { display: flex; align-items: center; gap: 12px; }
-  .logo-dot {
-    width: 8px; height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .header-title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
-  .header-sub { font-size: 13px; color: var(--text3); }
-  .header-actions { display: flex; align-items: center; gap: 8px; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 8px;
-    font-size: 13px; font-weight: 500;
-    cursor: pointer; border: none; transition: all 0.15s;
-    font-family: inherit;
-  }
-  .btn-outline {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--text2);
-  }
-  .btn-outline:hover { background: var(--surface2); color: var(--text); }
-  .btn-solid {
-    background: var(--accent);
-    color: white;
-  }
-  .btn-solid:hover { opacity: 0.85; }
-  .status-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #22c55e;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  /* TABS */
-  .tabs-bar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-  }
-  .tabs-inner {
-    max-width: 1280px; margin: 0 auto;
-    display: flex; gap: 0; overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .tabs-inner::-webkit-scrollbar { display: none; }
-  .tab {
-    padding: 12px 18px;
-    font-size: 13px; font-weight: 400;
-    color: var(--text3);
-    border-bottom: 2px solid transparent;
-    cursor: pointer; white-space: nowrap;
-    transition: all 0.15s;
-    background: none; border-top: none; border-left: none; border-right: none;
-    font-family: inherit;
-  }
-  .tab:hover { color: var(--text2); }
-  .tab.active { color: var(--text); font-weight: 500; border-bottom-color: var(--text); }
-
-  /* MAIN */
-  .main { max-width: 1280px; margin: 0 auto; padding: 2rem; }
-
-  /* KPI GRID */
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
-    margin-bottom: 2rem;
-  }
-  .kpi-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.1rem 1.25rem;
-    transition: box-shadow 0.15s;
-  }
-  .kpi-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
-  .kpi-label {
-    font-size: 11px; font-weight: 500;
-    color: var(--text3); text-transform: uppercase;
-    letter-spacing: 0.06em; margin-bottom: 8px;
-  }
-  .kpi-value {
-    font-size: 26px; font-weight: 600;
-    letter-spacing: -0.02em; line-height: 1;
-    margin-bottom: 4px;
-  }
-  .kpi-meta { font-size: 12px; color: var(--text3); }
-
-  /* TWO COL */
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
-  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
-
-  /* PANEL */
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-  }
-  .panel-header {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .panel-title { font-size: 13px; font-weight: 500; color: var(--text2); }
-  .panel-body { padding: 1.25rem; }
-
-  /* TABLE */
-  .table-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; }
-  .table-toolbar {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-  }
-  .table-toolbar-left { display: flex; align-items: center; gap: 10px; }
-  .table-name { font-size: 13px; font-weight: 500; color: var(--text2); }
-  .record-count { font-size: 12px; color: var(--text3); background: var(--surface2); padding: 3px 9px; border-radius: 20px; }
-  .search-wrap { position: relative; }
-  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; font-size: 14px; }
-  .search-input {
-    padding: 7px 12px 7px 32px;
-    border: 1px solid var(--border2);
-    border-radius: 8px;
-    font-size: 13px; font-family: inherit;
-    background: var(--bg);
-    color: var(--text);
-    width: 240px;
-    transition: all 0.15s;
-  }
-  .search-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
-  .table-scroll { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  thead tr { background: var(--surface2); }
-  th {
-    padding: 10px 14px; text-align: left;
-    font-weight: 500; font-size: 11px;
-    color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em;
-    white-space: nowrap; border-bottom: 1px solid var(--border);
-    cursor: pointer; user-select: none;
-  }
-  th:hover { color: var(--text2); }
-  th.sort-asc::after { content: ' ↑'; }
-  th.sort-desc::after { content: ' ↓'; }
-  td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--surface2); }
-  .td-num { text-align: right; font-family: 'DM Mono', monospace; font-size: 12px; }
-  .badge {
-    display: inline-flex; align-items: center;
-    padding: 2px 8px; border-radius: 20px;
-    font-size: 11px; font-weight: 500; white-space: nowrap;
-  }
-  .badge-green { background: var(--green-bg); color: var(--green-text); }
-  .badge-amber { background: var(--amber-bg); color: var(--amber-text); }
-  .badge-red { background: var(--red-bg); color: var(--red-text); }
-  .badge-blue { background: var(--blue-bg); color: var(--blue-text); }
-  .badge-gray { background: var(--accent-light); color: var(--text2); }
-
-  /* PAGINATION */
-  .pagination {
-    display: flex; align-items: center; gap: 8px;
-    padding: 12px 1.25rem;
-    border-top: 1px solid var(--border);
-    font-size: 13px; color: var(--text3);
-  }
-  .pagination-info { flex: 1; }
-  .page-btn {
-    padding: 5px 12px; border-radius: 7px;
-    border: 1px solid var(--border2);
-    background: none; font-family: inherit; font-size: 13px;
-    color: var(--text2); cursor: pointer; transition: all 0.12s;
-  }
-  .page-btn:hover:not(:disabled) { background: var(--surface2); }
-  .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-  /* LOADING / ERROR */
-  .state-screen {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    min-height: 320px; gap: 1rem; text-align: center;
-  }
-  .spinner {
-    width: 36px; height: 36px;
-    border: 2.5px solid var(--border2);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .state-title { font-size: 15px; font-weight: 500; }
-  .state-sub { font-size: 13px; color: var(--text3); max-width: 400px; }
-  .error-icon { font-size: 32px; }
-
-  /* CHART */
-  .chart-container { position: relative; width: 100%; }
-
-  /* EMPTY */
-  .empty-row td { text-align: center; color: var(--text3); padding: 2rem; }
-
-  /* FADE IN */
-  .fade-in { animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f5f4f0;--surface:#fff;--surface2:#f0efe9;--surface3:#e8e7e1;
+  --border:rgba(0,0,0,.07);--border2:rgba(0,0,0,.13);
+  --text:#1a1917;--text2:#6b6a65;--text3:#9c9b96;--accent:#1a1917;
+  --green:#15803d;--green-bg:#f0fdf4;--green-bd:#bbf7d0;
+  --red:#b91c1c;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --amber:#b45309;--amber-bg:#fffbeb;--amber-bd:#fde68a;
+  --blue:#1d4ed8;--blue-bg:#eff6ff;--blue-bd:#bfdbfe;
+  --purple:#6d28d9;--purple-bg:#f5f3ff;--purple-bd:#ddd6fe;
+  --r:10px;--rl:14px;--rs:6px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;z-index:50}
+.hdr-in{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:58px;gap:1rem}
+.hdr-l{display:flex;align-items:center;gap:10px}
+.live{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hdr-title{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.hdr-sub{font-size:12px;color:var(--text3);margin-top:1px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text2);font-family:inherit;transition:all .12s}
+.btn:hover{background:var(--surface2);color:var(--text)}
+.btn-solid{background:var(--accent);color:#fff;border-color:var(--accent);padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:inherit}
+.btn-solid:hover{opacity:.82}
+.tabs-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem}
+.tabs-in{max-width:1320px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none}
+.tabs-in::-webkit-scrollbar{display:none}
+.tab{padding:12px 20px;font-size:13px;color:var(--text3);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .12s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab:hover{color:var(--text2)}
+.tab.on{color:var(--text);font-weight:600;border-bottom-color:var(--text)}
+.main{max-width:1320px;margin:0 auto;padding:1.75rem 2rem}
+.sec{margin-bottom:2rem}
+.sec-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:10px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.1rem;transition:box-shadow .12s}
+.kpi:hover{box-shadow:0 2px 14px rgba(0,0,0,.07)}
+.kpi-lbl{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.kpi-val{font-size:28px;font-weight:600;letter-spacing:-.02em;line-height:1}
+.kpi-sub{font-size:12px;color:var(--text3);margin-top:4px}
+.kpi.g{border-left:3px solid var(--green);background:var(--green-bg)}
+.kpi.r{border-left:3px solid var(--red);background:var(--red-bg)}
+.kpi.a{border-left:3px solid #f59e0b;background:var(--amber-bg)}
+.kpi.b{border-left:3px solid #3b82f6;background:var(--blue-bg)}
+.kpi.p{border-left:3px solid #8b5cf6;background:var(--purple-bg)}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:860px){.cols2{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden}
+.ph{padding:.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.ph-title{font-size:13px;font-weight:500;color:var(--text2)}
+.ph-cnt{font-size:12px;color:var(--text3);background:var(--surface2);padding:2px 8px;border-radius:20px;white-space:nowrap}
+.toolbar{padding:.75rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.srch{padding:7px 11px;border:1px solid var(--border2);border-radius:var(--rs);font-size:13px;font-family:inherit;background:var(--bg);color:var(--text);flex:1;min-width:160px;max-width:260px}
+.srch:focus{outline:none;border-color:#94a3b8;background:var(--surface)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--surface2)}
+th{padding:9px 13px;text-align:left;font-weight:500;font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;border-bottom:1px solid var(--border)}
+td{padding:9px 13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.tr{text-align:right;font-family:'DM Mono',monospace;font-size:12px}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;margin:1px}
+.bg{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.br{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+.ba{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+.bb{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-bd)}
+.bx{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+.bp{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-bd)}
+.pag{display:flex;align-items:center;gap:8px;padding:.75rem 1.1rem;border-top:1px solid var(--border);font-size:12px;color:var(--text3)}
+.pag span{flex:1}
+.pb{padding:4px 11px;border-radius:6px;border:1px solid var(--border2);background:none;font-family:inherit;font-size:12px;color:var(--text2);cursor:pointer}
+.pb:hover:not(:disabled){background:var(--surface2)}
+.pb:disabled{opacity:.3;cursor:not-allowed}
+.prog-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border)}
+.prog-row:last-child{border-bottom:none}
+.prog-lbl{flex:0 0 130px;font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog-bar-w{flex:1;background:var(--surface2);border-radius:20px;height:7px;overflow:hidden}
+.prog-bar{height:100%;border-radius:20px;background:#3b82f6;transition:width .4s}
+.prog-v{flex:0 0 36px;font-size:12px;font-family:'DM Mono',monospace;text-align:right;color:var(--text2)}
+.prog-p{flex:0 0 38px;font-size:11px;color:var(--text3);text-align:right}
+.state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:340px;gap:1rem;text-align:center;padding:2rem}
+.spinner{width:34px;height:34px;border:2.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .75s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.st{font-size:15px;font-weight:500}
+.ss{font-size:13px;color:var(--text3);max-width:420px}
+.div{height:1px;background:var(--border);margin:1.75rem 0}
+.fade{animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.mt td{font-weight:600;background:var(--surface2)!important}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-inner">
-    <div class="header-left">
-      <div class="logo-dot"></div>
+<div class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-l">
+      <div class="live" id="ldot" style="display:none"></div>
       <div>
-        <div class="header-title" id="main-title">Dashboard de Resultados</div>
-        <div class="header-sub" id="main-sub">A carregar...</div>
+        <div class="hdr-title">Dashboard de Resultados</div>
+        <div class="hdr-sub" id="hsub">A carregar...</div>
       </div>
     </div>
-    <div class="header-actions">
-      <div class="status-dot" id="status-dot" style="display:none"></div>
-      <button class="btn btn-outline" onclick="loadData()">↻ Actualizar</button>
-    </div>
+    <button class="btn" onclick="init()">↻ Actualizar</button>
   </div>
 </div>
 
-<div class="tabs-bar" id="tabs-bar" style="display:none">
-  <div class="tabs-inner" id="tabs"></div>
+<div class="tabs-bar" id="tbar" style="display:none">
+  <div class="tabs-in">
+    <button class="tab on" id="t1" onclick="showTab('raw')">RAW DATA</button>
+    <button class="tab" id="t2" onclick="showTab('kpi')">RECOVERS KPI</button>
+  </div>
 </div>
 
-<div class="main" id="main-content">
-  <div class="state-screen">
-    <div class="spinner"></div>
-    <div class="state-title">A carregar dados</div>
-    <div class="state-sub">A ligar ao Google Sheets...</div>
-  </div>
+<div class="main" id="app">
+  <div class="state"><div class="spinner"></div><div class="st">A carregar dados</div><div class="ss">A ligar ao Google Sheets...</div></div>
 </div>
 
 <script>
-const SHEET_ID = '1SRTOqqHPJfo2YEVzNk960pfhZ5amGe6L';
-const PAGE_SIZE = 25;
+const SID = '1SRTOqqHPJfo2YEVzNk960pfhZ5amGe6L';
+let RAW=[], KPI=[];
+let ls='',lp=0, ts='',tp=0, ds='',dp=0;
+const PG=20;
+let CI=null;
 
-let allSheets = [];
-let currentSheetIdx = 0;
-let searchQuery = '';
-let currentPage = 0;
-let sortCol = -1;
-let sortDir = 1;
-let chartInstances = [];
-
-// ── CSV PARSER ──────────────────────────────────────────────
-function parseCSV(text) {
-  const rows = [];
-  const lines = text.split(/\r?\n/);
-  for (const line of lines) {
-    if (!line.trim()) continue;
-    const row = [];
-    let i = 0;
-    while (i < line.length) {
-      if (line[i] === '"') {
-        i++;
-        let cell = '';
-        while (i < line.length) {
-          if (line[i] === '"' && line[i+1] === '"') { cell += '"'; i += 2; }
-          else if (line[i] === '"') { i++; break; }
-          else { cell += line[i++]; }
-        }
-        row.push(cell.trim());
-        if (line[i] === ',') i++;
-      } else {
-        let cell = '';
-        while (i < line.length && line[i] !== ',') cell += line[i++];
-        row.push(cell.trim());
-        if (line[i] === ',') i++;
-      }
-    }
-    rows.push(row);
-  }
-  return rows;
-}
-
-// ── HELPERS ──────────────────────────────────────────────────
-function isNumericVal(v) {
-  if (!v || v === '' || v === '-') return false;
-  return !isNaN(parseFloat(v.toString().replace(/[€$%\s]/g,'').replace('.','').replace(',','.')));
-}
-function toNum(v) {
-  return parseFloat(v.toString().replace(/[€$%\s]/g,'').replace(/\./g,'').replace(',','.')) || 0;
-}
-function fmtNum(v) {
-  const n = toNum(v);
-  if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(2).replace('.',',') + ' M';
-  if (Math.abs(n) >= 1e3) return (n/1e3).toFixed(1).replace('.',',') + ' K';
-  return n.toLocaleString('pt-PT', {maximumFractionDigits:2});
-}
-function fmtDisplay(v) {
-  return v.toLocaleString('pt-PT', {maximumFractionDigits:2});
-}
-function colIsNumeric(data, idx) {
-  const sample = data.slice(0, Math.min(30, data.length));
-  const numCount = sample.filter(r => r[idx] && isNumericVal(r[idx])).length;
-  return numCount >= sample.length * 0.5;
-}
-function badgeFor(val) {
-  const s = (val||'').toString().toLowerCase();
-  const green = ['sim','ativo','ativa','activo','activa','ok','concluído','concluida','aprovado','aprovada','yes','true','em dia','operacional'];
-  const red = ['não','nao','inativo','inativa','inactivo','inactiva','avariado','avariada','em falta','no','false','atrasado','atrasada','desativado'];
-  const amber = ['em curso','parcial','revisão','revisao','aguarda','pendente','manutenção'];
-  const blue = ['novo','nova','agendado','agendada','programado'];
-  if (green.some(k => s === k || s.includes(k))) return 'green';
-  if (red.some(k => s === k || s.includes(k))) return 'red';
-  if (amber.some(k => s.includes(k))) return 'amber';
-  if (blue.some(k => s.includes(k))) return 'blue';
-  return null;
-}
-
-// ── GOOGLE VISUALIZATION API (suporta CORS) ───────────────────
-function gvizQuery(sheetName) {
-  return new Promise((resolve, reject) => {
-    const cbName = '_gviz_cb_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-    const sheetParam = sheetName ? `&sheet=${encodeURIComponent(sheetName)}` : '';
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&tq=select+*${sheetParam}&callback=${cbName}`;
-    const script = document.createElement('script');
-    const timer = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 10000);
-    function cleanup() { clearTimeout(timer); delete window[cbName]; if (script.parentNode) script.parentNode.removeChild(script); }
-    window[cbName] = (data) => { cleanup(); resolve(data); };
-    script.onerror = () => { cleanup(); reject(new Error('Script error')); };
-    script.src = url;
-    document.head.appendChild(script);
+function gviz(sheet){
+  return new Promise((res,rej)=>{
+    const cb='_g'+Date.now()+Math.random().toString(36).slice(2);
+    const url=`https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}&callback=${cb}`;
+    const s=document.createElement('script');
+    const t=setTimeout(()=>{cleanup();rej(new Error('Timeout: '+sheet));},12000);
+    function cleanup(){clearTimeout(t);delete window[cb];s.parentNode&&s.parentNode.removeChild(s);}
+    window[cb]=d=>{cleanup();res(d);};
+    s.onerror=()=>{cleanup();rej(new Error('Erro ao carregar: '+sheet));};
+    s.src=url;document.head.appendChild(s);
   });
 }
 
-function gvizToRows(data) {
-  if (!data || !data.table) return [];
-  const cols = data.table.cols || [];
-  const rows = data.table.rows || [];
-  const headers = cols.map(c => c.label || c.id || '');
-  if (!headers.some(h => h)) return [];
-  const dataRows = rows.map(r =>
-    (r.c || []).map((cell, i) => {
-      if (!cell || cell.v === null || cell.v === undefined) return '';
-      if (cell.f) return cell.f; // formatted value (preserves original text)
-      return String(cell.v);
-    })
-  );
-  return [headers, ...dataRows];
+function clean(v){
+  if(v===null||v===undefined)return'';
+  const s=String(v).trim();
+  if(/^#(NAME|REF|N\/A|VALUE|DIV\/0|NULL|NUM)[\?!]?$/i.test(s)||s==='#N/A')return'';
+  return s;
 }
 
-// Known sheet names to try — will be updated dynamically
-let knownSheetNames = ['Sheet1','Folha1','Folha 1','Data','Dados','KPIs','Equipamentos','Pessoas','Resultados'];
+function parse(data){
+  if(!data?.table)return[];
+  const cols=data.table.cols||[];
+  const rows=data.table.rows||[];
+  const hdr=cols.map(c=>(c.label||c.id||'').trim());
+  return[hdr,...rows.map(r=>(r.c||[]).map(cell=>{
+    if(!cell||cell.v===null||cell.v===undefined)return'';
+    return clean(cell.f!==undefined&&cell.f!==null?cell.f:cell.v);
+  }))];
+}
 
-async function fetchSheetsList() {
-  // Try to get sheet names via the spreadsheet feed
-  try {
-    const data = await gvizQuery('');
-    if (data && data.table) {
-      // Success — we have at least the first sheet
-      // Try to get sheet names from the response
-      const title = (data.properties && data.properties.title) || 'Dashboard de Resultados';
-      document.getElementById('main-title').textContent = title;
-    }
-  } catch(e) {}
+function toObj(rows){
+  if(rows.length<2)return[];
+  const h=rows[0];
+  return rows.slice(1).map(r=>{const o={};h.forEach((k,i)=>{o[k]=r[i]||'';});return o;});
+}
 
-  // Probe all candidate sheet names in parallel
-  const candidates = [...new Set(knownSheetNames)];
-  const results = await Promise.allSettled(candidates.map(name => gvizQuery(name)));
-  const sheets = [];
-  results.forEach((r, i) => {
-    if (r.status === 'fulfilled' && r.value && r.value.table && r.value.table.rows && r.value.table.rows.length > 0) {
-      sheets.push({ name: candidates[i], gid: candidates[i], _data: r.value });
-    }
+function fc(headers,...terms){
+  return headers.find(h=>terms.some(t=>h.toLowerCase().includes(t.toLowerCase())))||'';
+}
+
+async function init(){
+  document.getElementById('app').innerHTML='<div class="state"><div class="spinner"></div><div class="st">A carregar dados</div><div class="ss">A ligar ao Google Sheets...</div></div>';
+  document.getElementById('tbar').style.display='none';
+  document.getElementById('ldot').style.display='none';
+  if(CI){try{CI.destroy();}catch(e){}CI=null;}
+  try{
+    const[d1,d2]=await Promise.all([gviz('RAW DATA'),gviz('RECOVERS KPI')]);
+    RAW=parse(d1); KPI=parse(d2);
+    document.getElementById('hsub').textContent=`Actualizado às ${new Date().toLocaleTimeString('pt-PT')}`;
+    document.getElementById('ldot').style.display='block';
+    document.getElementById('tbar').style.display='block';
+    ls='';lp=0;ts='';tp=0;ds='';dp=0;
+    showTab('raw');
+  }catch(e){
+    document.getElementById('app').innerHTML=`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que o ficheiro está partilhado como <strong>"Qualquer pessoa com o link pode ver"</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
+  }
+}
+
+function showTab(t){
+  document.getElementById('t1').className='tab'+(t==='raw'?' on':'');
+  document.getElementById('t2').className='tab'+(t==='kpi'?' on':'');
+  if(t==='raw')renderRaw(); else renderKPI();
+}
+
+// ══ RAW DATA ══
+function renderRaw(){
+  if(RAW.length<2){document.getElementById('app').innerHTML='<div class="state"><div class="ss">Sem dados em RAW DATA.</div></div>';return;}
+  const data=toObj(RAW);
+  const H=RAW[0];
+  const WAH  =fc(H,'WAH STATUS','WAH_STATUS','WAHSTATUS');
+  const LOC  =fc(H,'LOCATION TY','LOCATION TYPE','LOCATION_TY');
+  const RET  =fc(H,'RETENTION');
+  const BMS  =fc(H,'BMS');
+  const NAME =fc(H,'COLABNAME','COLAB NAME','NAME','COLABORADOR');
+  const DESC =fc(H,'DESCRIPTION','DESC','TIPO','TYPE');
+  const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
+  const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
+
+  // 1. WAH GROUPS
+  const wahG={};
+  data.forEach(r=>{const v=(r[WAH]||'').trim();if(!v)return;wahG[v]=(wahG[v]||0)+1;});
+  const actTotal=Object.entries(wahG).filter(([k])=>/active/i.test(k)).reduce((s,[,v])=>s+v,0);
+  const termTotal=Object.entries(wahG).filter(([k])=>/terminat/i.test(k)).reduce((s,[,v])=>s+v,0);
+
+  // 2. LOCATION
+  const locG={};
+  data.forEach(r=>{const v=(r[LOC]||'').trim()||'(sem info)';locG[v]=(locG[v]||0)+1;});
+  const locS=Object.entries(locG).sort((a,b)=>b[1]-a[1]);
+  const locT=Object.values(locG).reduce((s,v)=>s+v,0);
+
+  // 3. TERMINATED + RETENTION
+  const term=data.filter(r=>/terminat/i.test(r[WAH]||''));
+  const withInfo =term.filter(r=>{const v=(r[RET]||'').trim();return v&&!v.startsWith('#');});
+  const noInfo   =term.filter(r=>{const v=(r[RET]||'').trim();return!v||v.startsWith('#');});
+
+  // 4. TERM LIST (BMS + Name + Assets)
+  const tmap={};
+  term.forEach(r=>{
+    const bms=(r[BMS]||'').trim()||'—';
+    const name=(r[NAME]||'').trim()||'—';
+    const asset=(r[ASSET]||'').trim();
+    const key=bms+'|||'+name;
+    if(!tmap[key])tmap[key]={bms,name,assets:[]};
+    if(asset&&!tmap[key].assets.includes(asset))tmap[key].assets.push(asset);
   });
+  const tlist=Object.values(tmap).sort((a,b)=>a.name.localeCompare(b.name));
 
-  if (!sheets.length) {
-    // Fallback: try empty sheet name (loads first sheet)
-    try {
-      const data = await gvizQuery('');
-      if (data && data.table && data.table.rows && data.table.rows.length > 0) {
-        sheets.push({ name: 'Folha1', gid: '', _data: data });
-      }
-    } catch(e) {}
-  }
+  // 5. DESC + LC
+  const dmap={};
+  data.forEach(r=>{
+    const desc=(r[DESC]||'').trim()||'(sem descrição)';
+    const lc=(r[LC]||'').trim();
+    if(!dmap[desc])dmap[desc]={total:0,over3:0,under3:0,unk:0};
+    dmap[desc].total++;
+    if(!lc){dmap[desc].unk++;return;}
+    // LC values like "-3 anos" or "3" — negative means older
+    const num=parseFloat(lc.replace(/[^\d.\-]/g,'').replace(',','.'));
+    if(isNaN(num)){dmap[desc].unk++;}
+    else if(Math.abs(num)>3||num<-3){dmap[desc].over3++;}
+    else{dmap[desc].under3++;}
+  });
+  const dlist=Object.entries(dmap).sort((a,b)=>b[1].total-a[1].total);
 
-  return sheets;
-}
+  let h='<div class="fade">';
 
-async function fetchSheetCSV(gid, cachedData) {
-  if (cachedData) return gvizToRows(cachedData);
-  const data = await gvizQuery(gid);
-  return gvizToRows(data);
-}
-
-async function loadData() {
-  document.getElementById('main-content').innerHTML = `
-    <div class="state-screen">
-      <div class="spinner"></div>
-      <div class="state-title">A carregar dados</div>
-      <div class="state-sub">A ligar ao Google Sheets...</div>
-    </div>`;
-  document.getElementById('tabs-bar').style.display = 'none';
-  document.getElementById('status-dot').style.display = 'none';
-  chartInstances.forEach(c => { try { c.destroy(); } catch(e){} });
-  chartInstances = [];
-
-  try {
-    const sheetList = await fetchSheetsList();
-    allSheets = [];
-    for (const s of sheetList) {
-      try {
-        const rows = await fetchSheetCSV(s.gid, s._data);
-        const validRows = rows.filter(r => r.some(c => c !== ''));
-        if (validRows.length >= 1) allSheets.push({ name: s.name, gid: s.gid, rows: validRows });
-      } catch(e) { console.warn('Folha ignorada:', s.name, e); }
-    }
-    if (!allSheets.length) throw new Error('Nenhuma folha com dados encontrada.');
-
-    const ts = new Date().toLocaleTimeString('pt-PT');
-    document.getElementById('main-sub').textContent = `${allSheets.length} folha(s) · actualizado às ${ts}`;
-    document.getElementById('status-dot').style.display = 'block';
-    document.getElementById('tabs-bar').style.display = 'block';
-
-    currentSheetIdx = 0; searchQuery = ''; currentPage = 0; sortCol = -1;
-    renderTabs();
-    renderSheet(0);
-  } catch(e) {
-    document.getElementById('main-content').innerHTML = `
-      <div class="state-screen">
-        <div class="error-icon">⚠️</div>
-        <div class="state-title">Não foi possível carregar os dados</div>
-        <div class="state-sub">${e.message}<br><br>Confirma que o ficheiro está partilhado como <strong>"Qualquer pessoa com o link pode ver"</strong>.<br><br>Se o problema persistir, partilha os nomes das folhas do teu ficheiro Excel para eu as configurar.</div>
-        <button class="btn btn-solid" onclick="loadData()">Tentar novamente</button>
-      </div>`;
-  }
-}
-
-// ── TABS ──────────────────────────────────────────────────────
-function renderTabs() {
-  document.getElementById('tabs').innerHTML = allSheets.map((s,i) =>
-    `<button class="tab ${i===currentSheetIdx?'active':''}" onclick="switchSheet(${i})">${s.name}</button>`
-  ).join('');
-}
-function switchSheet(i) {
-  chartInstances.forEach(c => { try { c.destroy(); } catch(e){} });
-  chartInstances = [];
-  currentSheetIdx = i; currentPage = 0; searchQuery = ''; sortCol = -1; sortDir = 1;
-  renderTabs();
-  renderSheet(i);
-}
-
-// ── RENDER SHEET ──────────────────────────────────────────────
-function renderSheet(idx) {
-  const sheet = allSheets[idx];
-  const rows = sheet.rows;
-  if (rows.length < 1) { document.getElementById('main-content').innerHTML = '<div class="state-screen"><div class="state-sub">Folha sem dados.</div></div>'; return; }
-
-  const headers = rows[0];
-  const data = rows.slice(1).filter(r => r.some(c => c !== ''));
-  const numCols = headers.map((_,i) => ({ i, isNum: colIsNumeric(data, i) }));
-  const numericIdxs = numCols.filter(c => c.isNum).map(c => c.i);
-  const textIdxs = numCols.filter(c => !c.isNum).map(c => c.i);
-
-  let html = '<div class="fade-in">';
-
-  // KPI CARDS
-  if (numericIdxs.length > 0) {
-    html += '<div class="kpi-grid">';
-    numericIdxs.slice(0, 8).forEach(ci => {
-      const vals = data.map(r => toNum(r[ci])).filter(v => v !== 0);
-      if (!vals.length) return;
-      const sum = vals.reduce((a,b)=>a+b,0);
-      const avg = sum / vals.length;
-      const max = Math.max(...vals);
-      html += `<div class="kpi-card">
-        <div class="kpi-label">${headers[ci]}</div>
-        <div class="kpi-value">${fmtNum(sum)}</div>
-        <div class="kpi-meta">Média ${fmtNum(avg)} · Máx ${fmtNum(max)}</div>
-      </div>`;
-    });
-    html += '</div>';
-  }
-
-  // CHARTS — only if data fits
-  if (numericIdxs.length > 0 && textIdxs.length > 0 && data.length >= 2 && data.length <= 60) {
-    const labelIdx = textIdxs[0];
-    const chartSets = numericIdxs.slice(0, 2);
-    html += '<div class="two-col">';
-    chartSets.forEach((ci, chartNum) => {
-      const chartId = `chart_${idx}_${chartNum}_${Date.now()}`;
-      const labels = data.map(r => (r[labelIdx]||'').slice(0,20));
-      const values = data.map(r => toNum(r[ci]));
-      const isHoriz = data.length > 10;
-      const h = isHoriz ? Math.max(280, data.length * 30 + 60) : 240;
-      html += `<div class="panel">
-        <div class="panel-header"><span class="panel-title">${headers[ci]} por ${headers[labelIdx]}</span></div>
-        <div class="panel-body">
-          <div class="chart-container" style="height:${h}px">
-            <canvas id="${chartId}" role="img" aria-label="Gráfico ${headers[ci]} por ${headers[labelIdx]}"></canvas>
-          </div>
-        </div>
-      </div>`;
-      setTimeout(() => {
-        const ctx = document.getElementById(chartId);
-        if (!ctx) return;
-        const colors = values.map((_,i) => `hsl(${210 + i * 8}, 65%, ${45 + (i%3)*8}%)`);
-        const chart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels,
-            datasets: [{ label: headers[ci], data: values, backgroundColor: colors, borderRadius: 4, borderSkipped: false }]
-          },
-          options: {
-            indexAxis: isHoriz ? 'y' : 'x',
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11, family: 'DM Sans' }, color: '#9c9b96', maxRotation: 40 } },
-              y: { grid: { color: isHoriz ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0)' }, ticks: { font: { size: 11, family: 'DM Sans' }, color: '#9c9b96' } }
-            }
-          }
-        });
-        chartInstances.push(chart);
-      }, 80);
-    });
-    html += '</div>';
-  }
-
-  // TABLE
-  html += `<div class="table-panel">
-    <div class="table-toolbar">
-      <div class="table-toolbar-left">
-        <span class="table-name">${sheet.name}</span>
-        <span class="record-count" id="record-count">${data.length} registos</span>
-      </div>
-      <div class="search-wrap">
-        <span class="search-icon">⌕</span>
-        <input class="search-input" id="search-input" type="search" placeholder="Filtrar..." value="${searchQuery}" oninput="onSearch(this.value)">
-      </div>
-    </div>
-    <div class="table-scroll">
-      <table id="data-table">
-        <thead><tr id="thead-row"></tr></thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-    <div class="pagination" id="pagination"></div>
+  // ── 1. WAH STATUS ──
+  h+=`<div class="sec"><div class="sec-lbl">1 · WAH Status — Assets por Estado</div>
+  <div class="kpi-row">
+    <div class="kpi g"><div class="kpi-lbl">WAH Active</div><div class="kpi-val">${actTotal}</div><div class="kpi-sub">assets activos</div></div>
+    <div class="kpi r"><div class="kpi-lbl">WAH Terminated</div><div class="kpi-val">${termTotal}</div><div class="kpi-sub">assets terminados</div></div>
+    <div class="kpi b"><div class="kpi-lbl">Total Geral</div><div class="kpi-val">${data.length}</div><div class="kpi-sub">todos os assets</div></div>
   </div>`;
+  if(Object.keys(wahG).length>2){
+    h+=`<div class="panel" style="margin-top:10px"><div class="ph"><span class="ph-title">Detalhe por sub-estado WAH</span></div><div class="tw"><table>
+    <thead><tr><th>Estado WAH</th><th class="tr">Assets</th><th class="tr">%</th></tr></thead><tbody>`;
+    Object.entries(wahG).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+      const pct=((v/data.length)*100).toFixed(1);
+      const cls=/active/i.test(k)?'bg':/terminat/i.test(k)?'br':'bx';
+      h+=`<tr><td><span class="badge ${cls}">${k}</span></td><td class="tr">${v}</td><td class="tr">${pct}%</td></tr>`;
+    });
+    h+=`</tbody></table></div></div>`;
+  }
+  h+=`</div><div class="div"></div>`;
 
-  html += '</div>';
-  document.getElementById('main-content').innerHTML = html;
-
-  // Render table headers
-  const theadRow = document.getElementById('thead-row');
-  headers.forEach((h, i) => {
-    const th = document.createElement('th');
-    th.textContent = h;
-    if (numericIdxs.includes(i)) th.style.textAlign = 'right';
-    th.onclick = () => onSort(i);
-    theadRow.appendChild(th);
+  // ── 2. LOCATION ──
+  h+=`<div class="sec"><div class="sec-lbl">2 · Assets por Location Type</div>
+  <div class="cols2">
+    <div class="panel"><div class="ph"><span class="ph-title">Distribuição por Localização</span><span class="ph-cnt">${locT} assets</span></div>
+    <div style="padding:1rem 1.1rem">`;
+  locS.forEach(([k,v])=>{
+    const pct=((v/locT)*100).toFixed(1);
+    h+=`<div class="prog-row"><div class="prog-lbl" title="${k}">${k}</div><div class="prog-bar-w"><div class="prog-bar" style="width:${pct}%"></div></div><div class="prog-v">${v}</div><div class="prog-p">${pct}%</div></div>`;
   });
-
-  renderTable(headers, data, numericIdxs);
-}
-
-function onSearch(q) {
-  searchQuery = q; currentPage = 0;
-  const sheet = allSheets[currentSheetIdx];
-  const headers = sheet.rows[0];
-  const data = sheet.rows.slice(1).filter(r => r.some(c => c !== ''));
-  const numericIdxs = headers.map((_,i) => ({ i, isNum: colIsNumeric(data, i) })).filter(c => c.isNum).map(c => c.i);
-  renderTable(headers, data, numericIdxs);
-}
-
-function onSort(col) {
-  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
-  const sheet = allSheets[currentSheetIdx];
-  const headers = sheet.rows[0];
-  const data = sheet.rows.slice(1).filter(r => r.some(c => c !== ''));
-  const numericIdxs = headers.map((_,i) => ({ i, isNum: colIsNumeric(data, i) })).filter(c => c.isNum).map(c => c.i);
-  // Update header classes
-  document.querySelectorAll('th').forEach((th, i) => {
-    th.className = i === sortCol ? (sortDir === 1 ? 'sort-asc' : 'sort-desc') : '';
+  h+=`</div></div>
+    <div class="panel"><div class="ph"><span class="ph-title">Tabela</span></div><div class="tw"><table>
+    <thead><tr><th>Location Type</th><th class="tr">Assets</th><th class="tr">%</th></tr></thead><tbody>`;
+  locS.forEach(([k,v])=>{
+    const pct=((v/locT)*100).toFixed(1);
+    h+=`<tr><td>${k}</td><td class="tr">${v}</td><td class="tr">${pct}%</td></tr>`;
   });
-  renderTable(headers, data, numericIdxs);
+  h+=`</tbody></table></div></div></div></div><div class="div"></div>`;
+
+  // ── 3. RETENTION ──
+  const cov=termTotal?((withInfo.length/termTotal)*100).toFixed(0):0;
+  h+=`<div class="sec"><div class="sec-lbl">3 · WAH Terminated — Retention Status (Acompanhamento)</div>
+  <div class="kpi-row">
+    <div class="kpi r"><div class="kpi-lbl">Terminated Total</div><div class="kpi-val">${termTotal}</div><div class="kpi-sub">assets terminados</div></div>
+    <div class="kpi g"><div class="kpi-lbl">Com info / Seguidos</div><div class="kpi-val">${withInfo.length}</div><div class="kpi-sub">retention preenchido</div></div>
+    <div class="kpi a"><div class="kpi-lbl">Sem info / #N/A</div><div class="kpi-val">${noInfo.length}</div><div class="kpi-sub">necessitam acompanhamento</div></div>
+    <div class="kpi b"><div class="kpi-lbl">Taxa de Cobertura</div><div class="kpi-val">${cov}%</div><div class="kpi-sub">terminados com info</div></div>
+  </div></div><div class="div"></div>`;
+
+  // ── 4. TERM LIST ──
+  const tf=tlist.filter(r=>!ts||r.bms.toLowerCase().includes(ts)||r.name.toLowerCase().includes(ts)||r.assets.some(a=>a.toLowerCase().includes(ts)));
+  const tpaged=tf.slice(tp*PG,tp*PG+PG);
+  const tpages=Math.ceil(tf.length/PG);
+  h+=`<div class="sec"><div class="sec-lbl">4 · Lista WAH Terminated — BMS, Nome e Assets</div>
+  <div class="panel">
+    <div class="toolbar"><span class="ph-title">WAH Terminated</span><span class="ph-cnt">${tf.length} pessoas</span>
+      <input class="srch" placeholder="Filtrar BMS, nome ou asset..." value="${ts}" oninput="ts=this.value.toLowerCase();tp=0;renderRaw()">
+    </div>
+    <div class="tw"><table><thead><tr><th>BMS</th><th>Nome</th><th>Assets Associados</th><th class="tr">Nº Assets</th></tr></thead><tbody>`;
+  tpaged.forEach(r=>{
+    const ab=r.assets.slice(0,6).map(a=>`<span class="badge bx">${a}</span>`).join('');
+    const ex=r.assets.length>6?`<span class="badge bb">+${r.assets.length-6}</span>`:'';
+    h+=`<tr><td><span class="badge bb">${r.bms}</span></td><td>${r.name}</td><td>${ab}${ex}</td><td class="tr">${r.assets.length}</td></tr>`;
+  });
+  if(!tpaged.length)h+=`<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:1.5rem">Sem resultados</td></tr>`;
+  h+=`</tbody></table></div>`;
+  if(tpages>1)h+=`<div class="pag"><span>${tp*PG+1}–${Math.min(tp*PG+PG,tf.length)} de ${tf.length}</span>
+    <button class="pb" onclick="tp--;renderRaw()" ${tp===0?'disabled':''}>← Ant</button>
+    <button class="pb" onclick="tp++;renderRaw()" ${tp>=tpages-1?'disabled':''}>Seg →</button></div>`;
+  h+=`</div></div><div class="div"></div>`;
+
+  // ── 5. DESC + LC ──
+  const df=dlist.filter(([k])=>!ds||k.toLowerCase().includes(ds));
+  const dpaged=df.slice(dp*PG,dp*PG+PG);
+  const dpages=Math.ceil(df.length/PG);
+  h+=`<div class="sec"><div class="sec-lbl">5 · Assets por Description e Life Cycle (&gt; 3 anos = vermelho)</div>
+  <div class="panel">
+    <div class="toolbar"><span class="ph-title">Descrição de Assets</span><span class="ph-cnt">${df.length} tipos</span>
+      <input class="srch" placeholder="Filtrar descrição..." value="${ds}" oninput="ds=this.value.toLowerCase();dp=0;renderRaw()">
+    </div>
+    <div class="tw"><table><thead><tr><th>Description</th><th class="tr">Total</th><th class="tr">≤ 3 anos</th><th class="tr">&gt; 3 anos</th><th class="tr">Sem info</th><th style="min-width:140px">Distribuição</th></tr></thead><tbody>`;
+  dpaged.forEach(([k,v])=>{
+    const overP=v.total?Math.round(v.over3/v.total*100):0;
+    const undrP=v.total?Math.round(v.under3/v.total*100):0;
+    h+=`<tr>
+      <td>${k}</td>
+      <td class="tr">${v.total}</td>
+      <td class="tr" style="color:var(--green);font-weight:500">${v.under3}</td>
+      <td class="tr" style="color:var(--red);font-weight:500">${v.over3}</td>
+      <td class="tr" style="color:var(--text3)">${v.unk}</td>
+      <td><div style="display:flex;background:var(--surface2);border-radius:3px;overflow:hidden;height:8px">
+        <div style="width:${undrP}%;background:#22c55e;height:8px"></div>
+        <div style="width:${overP}%;background:#ef4444;height:8px"></div>
+      </div></td>
+    </tr>`;
+  });
+  if(!dpaged.length)h+=`<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:1.5rem">Sem resultados</td></tr>`;
+  h+=`</tbody></table></div>`;
+  if(dpages>1)h+=`<div class="pag"><span>${dp*PG+1}–${Math.min(dp*PG+PG,df.length)} de ${df.length}</span>
+    <button class="pb" onclick="dp--;renderRaw()" ${dp===0?'disabled':''}>← Ant</button>
+    <button class="pb" onclick="dp++;renderRaw()" ${dp>=dpages-1?'disabled':''}>Seg →</button></div>`;
+  h+=`</div></div></div>`;
+
+  document.getElementById('app').innerHTML=h;
 }
 
-function renderTable(headers, data, numericIdxs) {
-  let filtered = searchQuery
-    ? data.filter(r => r.some(c => c.toString().toLowerCase().includes(searchQuery.toLowerCase())))
-    : [...data];
+// ══ RECOVERS KPI ══
+function renderKPI(){
+  if(KPI.length<2){document.getElementById('app').innerHTML='<div class="state"><div class="ss">Sem dados em RECOVERS KPI.</div></div>';return;}
+  const H=KPI[0];
+  const allData=toObj(KPI);
 
-  if (sortCol >= 0) {
-    const isNum = numericIdxs.includes(sortCol);
-    filtered.sort((a,b) => {
-      const av = isNum ? toNum(a[sortCol]||0) : (a[sortCol]||'').toLowerCase();
-      const bv = isNum ? toNum(b[sortCol]||0) : (b[sortCol]||'').toLowerCase();
-      return av < bv ? -sortDir : av > bv ? sortDir : 0;
+  function pN(v){
+    if(!v&&v!==0)return 0;
+    return parseFloat(String(v).replace(/[€\s]/g,'').replace(/\./g,'').replace(',','.'))||0;
+  }
+  function fmtEur(v){return v.toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
+  function fmtPct(v){
+    if(!v&&v!==0)return'—';
+    const n=pN(v);
+    // value might already be 0-100 or 0-1
+    const pct=n>1?n:n*100;
+    return pct.toFixed(0)+'%';
+  }
+  function hasDat(r){
+    // row has data if any numeric column is non-zero
+    return['rescisoes','equipamentos','recuperados','processo'].some(k=>{
+      const col=Object.keys(r).find(h=>h.toLowerCase().includes(k.slice(0,5)));
+      return col&&pN(r[col])>0;
     });
   }
 
-  const total = filtered.length;
-  const start = currentPage * PAGE_SIZE;
-  const pageData = filtered.slice(start, start + PAGE_SIZE);
-  const totalPages = Math.ceil(total / PAGE_SIZE);
+  // Identify columns by keyword
+  const mCol  = H.find(h=>/m[eê]s|month/i.test(h))||H[0];
+  const cResc = H.find(h=>/rescis/i.test(h))||'';
+  const cEquip= H.find(h=>/equipam/i.test(h))||'';
+  const cRec  = H.find(h=>/recuperad/i.test(h))||'';
+  const cProc = H.find(h=>/processo|em proc/i.test(h))||'';
+  const cPct  = H.find(h=>/percent|recupera.*%|%/i.test(h))||'';
+  const cVal  = H.find(h=>/valor|€|retid/i.test(h))||'';
 
-  // Count el
-  const countEl = document.getElementById('record-count');
-  if (countEl) countEl.textContent = searchQuery ? `${total} de ${data.length} registos` : `${data.length} registos`;
+  // Only rows with actual data + keep all 12 months for table
+  const data12 = allData.filter(r=>(r[mCol]||'').trim());
+  const dataWithValues = data12.filter(r=>cResc&&pN(r[cResc])>0);
 
-  const tbody = document.getElementById('tbody');
-  if (!tbody) return;
-  if (!pageData.length) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="${headers.length}">Sem resultados para "${searchQuery}"</td></tr>`;
-  } else {
-    tbody.innerHTML = pageData.map(row => {
-      return '<tr>' + headers.map((h, i) => {
-        const val = (row[i] !== undefined ? row[i] : '');
-        if (numericIdxs.includes(i) && val !== '') {
-          return `<td class="td-num">${val}</td>`;
-        }
-        const badge = badgeFor(val);
-        if (badge) return `<td><span class="badge badge-${badge}">${val}</span></td>`;
-        return `<td>${val}</td>`;
-      }).join('') + '</tr>';
-    }).join('');
-  }
+  // Totals from data with values
+  const totResc  = dataWithValues.reduce((s,r)=>s+pN(r[cResc]),0);
+  const totEquip = dataWithValues.reduce((s,r)=>s+pN(r[cEquip]),0);
+  const totRec   = dataWithValues.reduce((s,r)=>s+pN(r[cRec]),0);
+  const totProc  = dataWithValues.reduce((s,r)=>s+pN(r[cProc]),0);
+  const totVal   = dataWithValues.reduce((s,r)=>s+pN(r[cVal]),0);
+  const avgPct   = totEquip>0?(totRec/totEquip*100):0;
+  const mesesAtivos = dataWithValues.length;
 
-  const pag = document.getElementById('pagination');
-  if (!pag) return;
-  if (totalPages <= 1) { pag.innerHTML = ''; return; }
-  pag.innerHTML = `
-    <span class="pagination-info">${start+1}–${Math.min(start+PAGE_SIZE,total)} de ${total} registos</span>
-    <button class="page-btn" onclick="changePage(-1)" ${currentPage===0?'disabled':''}>← Anterior</button>
-    <button class="page-btn" onclick="changePage(1)" ${currentPage>=totalPages-1?'disabled':''}>Seguinte →</button>`;
+  let h='<div class="fade">';
+
+  // ── KPI CARDS ──
+  h+=`<div class="sec"><div class="sec-lbl">Totais Acumulados ${new Date().getFullYear()} — ${mesesAtivos} ${mesesAtivos===1?'mês':'meses'} com dados</div>
+  <div class="kpi-row">
+    <div class="kpi b"><div class="kpi-lbl">Total Rescisões</div><div class="kpi-val">${totResc.toLocaleString('pt-PT')}</div><div class="kpi-sub">rescisões processadas</div></div>
+    <div class="kpi p"><div class="kpi-lbl">Total Equipamentos</div><div class="kpi-val">${totEquip.toLocaleString('pt-PT')}</div><div class="kpi-sub">equipamentos em scope</div></div>
+    <div class="kpi g"><div class="kpi-lbl">Recuperados</div><div class="kpi-val">${totRec.toLocaleString('pt-PT')}</div><div class="kpi-sub">equipamentos recuperados</div></div>
+    <div class="kpi a"><div class="kpi-lbl">Em Processo</div><div class="kpi-val">${totProc.toLocaleString('pt-PT')}</div><div class="kpi-sub">ainda em acompanhamento</div></div>
+    <div class="kpi ${avgPct>=80?'g':avgPct>=60?'a':'r'}"><div class="kpi-lbl">% Recuperação</div><div class="kpi-val">${avgPct.toFixed(0)}%</div><div class="kpi-sub">taxa global acumulada</div></div>
+    ${cVal?`<div class="kpi g"><div class="kpi-lbl">Valor Retido</div><div class="kpi-val" style="font-size:20px">${fmtEur(totVal)}</div><div class="kki-sub" style="font-size:12px;color:var(--text3);margin-top:4px">valor total recuperado</div></div>`:''}
+  </div></div><div class="div"></div>`;
+
+  // ── CHARTS side by side ──
+  const c1='ch1'+Date.now(), c2='ch2'+Date.now();
+  h+=`<div class="sec"><div class="sec-lbl">Evolução Mensal</div>
+  <div class="cols2">
+    <div class="panel"><div class="ph"><span class="ph-title">Rescisões vs Recuperados vs Em Processo</span></div>
+      <div style="padding:1rem;height:260px;position:relative"><canvas id="${c1}"></canvas></div></div>
+    <div class="panel"><div class="ph"><span class="ph-title">Taxa de Recuperação (%)</span></div>
+      <div style="padding:1rem;height:260px;position:relative"><canvas id="${c2}"></canvas></div></div>
+  </div></div>`;
+
+  setTimeout(()=>{
+    if(CI){try{CI.destroy();}catch(e){}CI=null;}
+    const activeRows=dataWithValues;
+    const labels=activeRows.map(r=>(r[mCol]||'').replace(/^\d+\s*-\s*/,''));
+
+    // Chart 1: bars
+    const ctx1=document.getElementById(c1);
+    if(ctx1){
+      CI=new Chart(ctx1,{type:'bar',data:{labels,datasets:[
+        {label:'Rescisões',data:activeRows.map(r=>pN(r[cResc])),backgroundColor:'#93c5fd',borderRadius:3},
+        {label:'Recuperados',data:activeRows.map(r=>pN(r[cRec])),backgroundColor:'#86efac',borderRadius:3},
+        {label:'Em Processo',data:activeRows.map(r=>pN(r[cProc])),backgroundColor:'#fcd34d',borderRadius:3},
+      ]},options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{font:{family:'DM Sans',size:11},boxWidth:10}}},
+        scales:{x:{grid:{display:false},ticks:{font:{size:11},color:'#9c9b96'}},
+                y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:11},color:'#9c9b96'}}}}});
+    }
+    // Chart 2: % line
+    const ctx2=document.getElementById(c2);
+    if(ctx2){
+      const pctData=activeRows.map(r=>{
+        const v=pN(r[cPct]);
+        return v>1?v:v*100;
+      });
+      new Chart(ctx2,{type:'line',data:{labels,datasets:[{
+        label:'% Recuperação',data:pctData,
+        borderColor:'#3b82f6',backgroundColor:'#3b82f620',
+        borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#3b82f6',tension:.3,fill:true
+      }]},options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(0)}%`}}},
+        scales:{
+          x:{grid:{display:false},ticks:{font:{size:11},color:'#9c9b96'}},
+          y:{min:0,max:100,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:11},color:'#9c9b96',callback:v=>v+'%'}}
+        }}});
+    }
+  },80);
+
+  // ── MONTHLY TABLE ──
+  h+=`<div class="div"></div><div class="sec"><div class="sec-lbl">Tabela Mensal Detalhada</div>
+  <div class="panel"><div class="tw"><table>
+  <thead><tr>
+    <th>Mês</th>
+    ${cResc?`<th class="tr">Total Rescisões</th>`:''}
+    ${cEquip?`<th class="tr">Total Equipamentos</th>`:''}
+    ${cRec?`<th class="tr">Recuperados</th>`:''}
+    ${cProc?`<th class="tr">Em Processo</th>`:''}
+    ${cPct?`<th class="tr">% Recuperação</th>`:''}
+    ${cVal?`<th class="tr">Valor Retido (€)</th>`:''}
+  </tr></thead><tbody>`;
+
+  data12.forEach(r=>{
+    const mes=(r[mCol]||'').trim();
+    if(!mes)return;
+    const hasData=cResc&&pN(r[cResc])>0;
+    const dimStyle=hasData?'':' style="color:var(--text3)"';
+    const dash='<span style="color:var(--text3)">—</span>';
+    const resc =cResc&&pN(r[cResc])>0  ?pN(r[cResc]).toLocaleString('pt-PT'):dash;
+    const equip=cEquip&&pN(r[cEquip])>0?pN(r[cEquip]).toLocaleString('pt-PT'):dash;
+    const rec  =cRec&&pN(r[cRec])>0   ?pN(r[cRec]).toLocaleString('pt-PT'):dash;
+    const proc =cProc&&pN(r[cProc])>0 ?pN(r[cProc]).toLocaleString('pt-PT'):dash;
+    const valR =cVal&&pN(r[cVal])>0   ?fmtEur(pN(r[cVal])):dash;
+
+    // % badge
+    let pctHtml=dash;
+    if(cPct&&r[cPct]){
+      const pv=pN(r[cPct]);const pct=pv>1?pv:pv*100;
+      if(pct>0){
+        const cls=pct>=80?'bg':pct>=60?'ba':'br';
+        pctHtml=`<span class="badge ${cls}">${pct.toFixed(0)}%</span>`;
+      }
+    }
+
+    h+=`<tr${dimStyle}><td><strong>${mes}</strong></td>
+      ${cResc?`<td class="tr">${resc}</td>`:''}
+      ${cEquip?`<td class="tr">${equip}</td>`:''}
+      ${cRec?`<td class="tr" style="${hasData?'color:var(--green);font-weight:500':'color:var(--text3)'}">${rec}</td>`:''}
+      ${cProc?`<td class="tr" style="${hasData?'color:var(--amber)':'color:var(--text3)'}">${proc}</td>`:''}
+      ${cPct?`<td class="tr">${pctHtml}</td>`:''}
+      ${cVal?`<td class="tr" style="${hasData?'font-weight:500':'color:var(--text3)'}">${valR}</td>`:''}
+    </tr>`;
+  });
+
+  // Totals row
+  h+=`<tr class="mt">
+    <td>TOTAL / MÉDIA</td>
+    ${cResc?`<td class="tr">${totResc.toLocaleString('pt-PT')}</td>`:''}
+    ${cEquip?`<td class="tr">${totEquip.toLocaleString('pt-PT')}</td>`:''}
+    ${cRec?`<td class="tr" style="color:var(--green)">${totRec.toLocaleString('pt-PT')}</td>`:''}
+    ${cProc?`<td class="tr" style="color:var(--amber)">${totProc.toLocaleString('pt-PT')}</td>`:''}
+    ${cPct?`<td class="tr"><span class="badge ${avgPct>=80?'bg':avgPct>=60?'ba':'br'}">${avgPct.toFixed(0)}%</span></td>`:''}
+    ${cVal?`<td class="tr">${fmtEur(totVal)}</td>`:''}
+  </tr>`;
+  h+=`</tbody></table></div></div></div></div>`;
+
+  document.getElementById('app').innerHTML=h;
 }
 
-function changePage(dir) {
-  const sheet = allSheets[currentSheetIdx];
-  const headers = sheet.rows[0];
-  const data = sheet.rows.slice(1).filter(r => r.some(c => c !== ''));
-  const numericIdxs = headers.map((_,i) => ({ i, isNum: colIsNumeric(data, i) })).filter(c => c.isNum).map(c => c.i);
-  const filtered = searchQuery ? data.filter(r => r.some(c => c.toString().toLowerCase().includes(searchQuery.toLowerCase()))) : data;
-  const total = Math.ceil(filtered.length / PAGE_SIZE);
-  currentPage = Math.max(0, Math.min(total-1, currentPage+dir));
-  renderTable(headers, data, numericIdxs);
-}
-
-// BOOT
-loadData();
+init();
 </script>
 </body>
 </html>
