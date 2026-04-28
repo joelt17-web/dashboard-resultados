@@ -229,7 +229,17 @@ function renderRaw(){
   const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
   const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
 
-  // WHITELIST — only exact matches allowed (case-insensitive)
+  // Normalize: lowercase, trim, replace curly quotes/apostrophes with straight, normalize unicode
+  function norm(s){
+    if(!s)return'';
+    return s.trim()
+      .toLowerCase()
+      .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g,"'") // curly apostrophes → straight
+      .replace(/[\u201C\u201D\u201E\u201F\u2033\u2036]/g,'"') // curly quotes → straight
+      .normalize('NFC'); // normalize unicode composition
+  }
+
+  // WHITELIST — only exact matches allowed (after normalization)
   const VALID_ASSET_TYPES = new Set([
     'armário','banco corrido','bloco gavetas','cadeira','cadeira de cafeteria',
     'desktop','diversos','docks','mesa','mesa de cafeteria','minipc','mobiliário',
@@ -238,22 +248,35 @@ function renderRaw(){
   ]);
   function isValidAssetType(v){
     if(!v)return false;
-    return VALID_ASSET_TYPES.has(v.trim().toLowerCase());
+    return VALID_ASSET_TYPES.has(norm(v));
   }
   const VALID_LOC_TYPES = new Set([
     'apartamentos','armazém','avt','edificios','staging','waha','warehouse'
   ]);
   function isValidLocType(v){
     if(!v)return false;
-    return VALID_LOC_TYPES.has(v.trim().toLowerCase());
+    return VALID_LOC_TYPES.has(norm(v));
   }
 
   // PC types filter for section 5
   const PC_TYPES_SET=new Set(['thin client','portátil','minipc','desktop']);
-  function isPCType(v){return PC_TYPES_SET.has((v||'').trim().toLowerCase());}
+  function isPCType(v){return PC_TYPES_SET.has(norm(v||''));}
+
+  // LC values: normalize before comparing
+  function normLC(v){return norm(v||'');}
 
   // Collect all unique valid Asset Types
   const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
+
+  // DEBUG: log unique raw ASSET TYPE values and LC values to console
+  const rawATypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()))].sort();
+  const rawLC=[...new Set(data.map(r=>(r[LC]||'').trim()))].filter(Boolean).sort();
+  console.log('=== RAW ASSET TYPES ===', rawATypes);
+  console.log('=== RAW LC VALUES ===', rawLC);
+  console.log('=== VALID ASSET TYPES found ===', allTypes);
+  const rejected=rawATypes.filter(v=>v&&!isValidAssetType(v));
+  console.log('=== REJECTED ASSET TYPES ===', rejected);
+  console.log('=== REJECTED (hex) ===', rejected.map(v=>({v, hex:[...v].map(c=>c.codePointAt(0).toString(16)).join(' ')})));
 
   // ── 1. WAH STATUS × ASSET TYPE (valid types only) ──
   const wahByType={};
@@ -308,14 +331,16 @@ function renderRaw(){
   const pcData=data.filter(r=>isPCType((r[ATYPE]||'').trim()));
   const dmap={};
   pcData.forEach(r=>{
-    const desc=(r[ATYPE]||'').trim()||'(sem tipo)';
-    const lc=(r[LC]||'').trim().toLowerCase();
-    if(!dmap[desc])dmap[desc]={total:0,over3:0,under3:0,unk:0};
-    dmap[desc].total++;
-    if(!lc){dmap[desc].unk++;return;}
-    if(lc==='mais 3 anos'){dmap[desc].over3++;}
-    else if(lc==='menos 3 anos'){dmap[desc].under3++;}
-    else{dmap[desc].unk++;}
+    const desc=norm(r[ATYPE]||'')||'(sem tipo)';
+    // Use original casing for display — find the original value
+    const descOrig=(r[ATYPE]||'').trim()||'(sem tipo)';
+    const lc=normLC(r[LC]);
+    if(!dmap[descOrig])dmap[descOrig]={total:0,over3:0,under3:0,unk:0};
+    dmap[descOrig].total++;
+    if(!lc){dmap[descOrig].unk++;return;}
+    if(lc==='mais 3 anos'){dmap[descOrig].over3++;}
+    else if(lc==='menos 3 anos'){dmap[descOrig].under3++;}
+    else{dmap[descOrig].unk++;}
   });
   const dlist=Object.entries(dmap).sort((a,b)=>b[1].total-a[1].total);
 
