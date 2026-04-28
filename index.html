@@ -200,32 +200,10 @@ async function init(){
     KPI=cleanRows(parseCSV(t2));
     if(RAW.length<2||KPI.length<2) throw new Error('Ficheiros CSV vazios ou sem dados.');
 
-    // DEBUG: show raw values on page
-    const _rh=RAW[0];
-    const _atI=_rh.findIndex(h=>/asset.?type/i.test(h));
-    const _lcI=_rh.findIndex(h=>/life/i.test(h));
-    const _loI=_rh.findIndex(h=>/location.?ty/i.test(h));
-    const _hex=v=>[...v].map(c=>c.codePointAt(0).toString(16)).join(' ');
-    const _uAt=[...new Set(RAW.slice(1).map(r=>(r[_atI]||'').trim()))].sort();
-    const _uLc=[...new Set(RAW.slice(1).map(r=>(r[_lcI]||'').trim()))].filter(Boolean).sort();
-    const _uLo=[...new Set(RAW.slice(1).map(r=>(r[_loI]||'').trim()))].filter(Boolean).sort();
-    document.getElementById('app').innerHTML=`<div style="background:#111;color:#0f0;font-family:monospace;font-size:11px;padding:1rem;margin:1rem;border-radius:8px;white-space:pre-wrap;overflow:auto;max-height:80vh">
-<b>HEADERS [${_rh.length}]:</b> ${JSON.stringify(_rh)}
-
-<b>ASSET TYPE idx=${_atI} — ${_uAt.length} unique:</b>
-${_uAt.map(v=>`  [${_hex(v)}] "${v}"`).join('\n')}
-
-<b>LIFE CIC idx=${_lcI} — ${_uLc.length} unique:</b>
-${_uLc.map(v=>`  [${_hex(v)}] "${v}"`).join('\n')}
-
-<b>LOCATION TYPE idx=${_loI} — ${_uLo.length} unique:</b>
-${_uLo.map(v=>`  [${_hex(v)}] "${v}"`).join('\n')}
-</div><button class="btn-solid" style="margin:1rem" onclick="document.querySelector('[style*=background]').remove();showTab('raw')">Ver Dashboard</button>`;
-    document.getElementById('hsub').textContent='DEBUG MODE';
+    document.getElementById('hsub').textContent=`Actualizado às ${new Date().toLocaleTimeString('pt-PT')}`;
     document.getElementById('ldot').style.display='block';
     document.getElementById('tbar').style.display='block';
     ls='';lp=0;ts='';tp=0;ds='';dp=0;
-    return;
     showTab('raw');
   }catch(e){
     document.getElementById('app').innerHTML=`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que os ficheiros CSV estão publicados na web via <strong>Ficheiro → Publicar na Web → CSV</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
