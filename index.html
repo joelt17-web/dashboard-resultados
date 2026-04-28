@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard de Resultados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --surface2: #f0efe9;
+    --border: rgba(0,0,0,0.08);
+    --border2: rgba(0,0,0,0.14);
+    --text: #1a1917;
+    --text2: #6b6a65;
+    --text3: #9c9b96;
+    --accent: #1a1917;
+    --accent-light: #e8e7e1;
+    --blue: #2563eb;
+    --blue-bg: #eff6ff;
+    --blue-text: #1d4ed8;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --green-text: #15803d;
+    --amber: #d97706;
+    --amber-bg: #fffbeb;
+    --amber-text: #b45309;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --red-text: #b91c1c;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    gap: 1rem;
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .header-title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .header-sub { font-size: 13px; color: var(--text3); }
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+  }
+  .btn-outline:hover { background: var(--surface2); color: var(--text); }
+  .btn-solid {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-solid:hover { opacity: 0.85; }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #22c55e;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* TABS */
+  .tabs-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+  }
+  .tabs-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; gap: 0; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs-inner::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 12px 18px;
+    font-size: 13px; font-weight: 400;
+    color: var(--text3);
+    border-bottom: 2px solid transparent;
+    cursor: pointer; white-space: nowrap;
+    transition: all 0.15s;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: inherit;
+  }
+  .tab:hover { color: var(--text2); }
+  .tab.active { color: var(--text); font-weight: 500; border-bottom-color: var(--text); }
+
+  /* MAIN */
+  .main { max-width: 1280px; margin: 0 auto; padding: 2rem; }
+
+  /* KPI GRID */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.25rem;
+    transition: box-shadow 0.15s;
+  }
+  .kpi-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+  .kpi-label {
+    font-size: 11px; font-weight: 500;
+    color: var(--text3); text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-size: 26px; font-weight: 600;
+    letter-spacing: -0.02em; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-meta { font-size: 12px; color: var(--text3); }
+
+  /* TWO COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* PANEL */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-title { font-size: 13px; font-weight: 500; color: var(--text2); }
+  .panel-body { padding: 1.25rem; }
+
+  /* TABLE */
+  .table-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 2rem; }
+  .table-toolbar {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  }
+  .table-toolbar-left { display: flex; align-items: center; gap: 10px; }
+  .table-name { font-size: 13px; font-weight: 500; color: var(--text2); }
+  .record-count { font-size: 12px; color: var(--text3); background: var(--surface2); padding: 3px 9px; border-radius: 20px; }
+  .search-wrap { position: relative; }
+  .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; font-size: 14px; }
+  .search-input {
+    padding: 7px 12px 7px 32px;
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    font-size: 13px; font-family: inherit;
+    background: var(--bg);
+    color: var(--text);
+    width: 240px;
+    transition: all 0.15s;
+  }
+  .search-input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead tr { background: var(--surface2); }
+  th {
+    padding: 10px 14px; text-align: left;
+    font-weight: 500; font-size: 11px;
+    color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em;
+    white-space: nowrap; border-bottom: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+  }
+  th:hover { color: var(--text2); }
+  th.sort-asc::after { content: ' ↑'; }
+  th.sort-desc::after { content: ' ↓'; }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .td-num { text-align: right; font-family: 'DM Mono', monospace; font-size: 12px; }
+  .badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; white-space: nowrap;
+  }
+  .badge-green { background: var(--green-bg); color: var(--green-text); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber-text); }
+  .badge-red { background: var(--red-bg); color: var(--red-text); }
+  .badge-blue { background: var(--blue-bg); color: var(--blue-text); }
+  .badge-gray { background: var(--accent-light); color: var(--text2); }
+
+  /* PAGINATION */
+  .pagination {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 1.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text3);
+  }
+  .pagination-info { flex: 1; }
+  .page-btn {
+    padding: 5px 12px; border-radius: 7px;
+    border: 1px solid var(--border2);
+    background: none; font-family: inherit; font-size: 13px;
+    color: var(--text2); cursor: pointer; transition: all 0.12s;
+  }
+  .page-btn:hover:not(:disabled) { background: var(--surface2); }
+  .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* LOADING / ERROR */
+  .state-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 320px; gap: 1rem; text-align: center;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 2.5px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .state-title { font-size: 15px; font-weight: 500; }
+  .state-sub { font-size: 13px; color: var(--text3); max-width: 400px; }
+  .error-icon { font-size: 32px; }
+
+  /* CHART */
+  .chart-container { position: relative; width: 100%; }
+
+  /* EMPTY */
+  .empty-row td { text-align: center; color: var(--text3); padding: 2rem; }
+
+  /* FADE IN */
+  .fade-in { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo-dot"></div>
+      <div>
+        <div class="header-title" id="main-title">Dashboard de Resultados</div>
+        <div class="header-sub" id="main-sub">A carregar...</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="status-dot" id="status-dot" style="display:none"></div>
+      <button class="btn btn-outline" onclick="loadData()">↻ Actualizar</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs-bar" id="tabs-bar" style="display:none">
+  <div class="tabs-inner" id="tabs"></div>
+</div>
+
+<div class="main" id="main-content">
+  <div class="state-screen">
+    <div class="spinner"></div>
+    <div class="state-title">A carregar dados</div>
+    <div class="state-sub">A ligar ao Google Sheets...</div>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = '1SRTOqqHPJfo2YEVzNk960pfhZ5amGe6L';
+const PAGE_SIZE = 25;
+
+let allSheets = [];
+let currentSheetIdx = 0;
+let searchQuery = '';
+let currentPage = 0;
+let sortCol = -1;
+let sortDir = 1;
+let chartInstances = [];
+
+// ── CSV PARSER ──────────────────────────────────────────────
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split(/\r?\n/);
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const row = [];
+    let i = 0;
+    while (i < line.length) {
+      if (line[i] === '"') {
+        i++;
+        let cell = '';
+        while (i < line.length) {
+          if (line[i] === '"' && line[i+1] === '"') { cell += '"'; i += 2; }
+          else if (line[i] === '"') { i++; break; }
+          else { cell += line[i++]; }
+        }
+        row.push(cell.trim());
+        if (line[i] === ',') i++;
+      } else {
+        let cell = '';
+        while (i < line.length && line[i] !== ',') cell += line[i++];
+        row.push(cell.trim());
+        if (line[i] === ',') i++;
+      }
+    }
+    rows.push(row);
+  }
+  return rows;
+}
+
+// ── HELPERS ──────────────────────────────────────────────────
+function isNumericVal(v) {
+  if (!v || v === '' || v === '-') return false;
+  return !isNaN(parseFloat(v.toString().replace(/[€$%\s]/g,'').replace('.','').replace(',','.')));
+}
+function toNum(v) {
+  return parseFloat(v.toString().replace(/[€$%\s]/g,'').replace(/\./g,'').replace(',','.')) || 0;
+}
+function fmtNum(v) {
+  const n = toNum(v);
+  if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(2).replace('.',',') + ' M';
+  if (Math.abs(n) >= 1e3) return (n/1e3).toFixed(1).replace('.',',') + ' K';
+  return n.toLocaleString('pt-PT', {maximumFractionDigits:2});
+}
+function fmtDisplay(v) {
+  return v.toLocaleString('pt-PT', {maximumFractionDigits:2});
+}
+function colIsNumeric(data, idx) {
+  const sample = data.slice(0, Math.min(30, data.length));
+  const numCount = sample.filter(r => r[idx] && isNumericVal(r[idx])).length;
+  return numCount >= sample.length * 0.5;
+}
+function badgeFor(val) {
+  const s = (val||'').toString().toLowerCase();
+  const green = ['sim','ativo','ativa','activo','activa','ok','concluído','concluida','aprovado','aprovada','yes','true','em dia','operacional'];
+  const red = ['não','nao','inativo','inativa','inactivo','inactiva','avariado','avariada','em falta','no','false','atrasado','atrasada','desativado'];
+  const amber = ['em curso','parcial','revisão','revisao','aguarda','pendente','manutenção'];
+  const blue = ['novo','nova','agendado','agendada','programado'];
+  if (green.some(k => s === k || s.includes(k))) return 'green';
+  if (red.some(k => s === k || s.includes(k))) return 'red';
+  if (amber.some(k => s.includes(k))) return 'amber';
+  if (blue.some(k => s.includes(k))) return 'blue';
+  return null;
+}
+
+// ── FETCH SHEETS LIST ─────────────────────────────────────────
+async function fetchSheetsList() {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+  const r = await fetch(url);
+  const html = await r.text();
+  // Extract title
+  const titleMatch = html.match(/<title>([^<]+)<\/title>/);
+  if (titleMatch) {
+    const t = titleMatch[1].replace(' - Google Sheets','').trim();
+    document.getElementById('main-title').textContent = t || 'Dashboard de Resultados';
+  }
+  const sheets = [];
+  const re = /"sheetId":(\d+),"title":"([^"]+)"/g;
+  let m; const seen = new Set();
+  while ((m = re.exec(html)) !== null) {
+    if (!seen.has(m[1])) { seen.add(m[1]); sheets.push({ gid: m[1], name: m[2] }); }
+  }
+  return sheets.length ? sheets : [{ gid:'0', name:'Folha1' }];
+}
+
+async function fetchSheetCSV(gid) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${gid}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return await r.text();
+}
+
+// ── MAIN LOAD ─────────────────────────────────────────────────
+async function loadData() {
+  document.getElementById('main-content').innerHTML = `
+    <div class="state-screen">
+      <div class="spinner"></div>
+      <div class="state-title">A carregar dados</div>
+      <div class="state-sub">A ligar ao Google Sheets...</div>
+    </div>`;
+  document.getElementById('tabs-bar').style.display = 'none';
+  document.getElementById('status-dot').style.display = 'none';
+  chartInstances.forEach(c => { try { c.destroy(); } catch(e){} });
+  chartInstances = [];
+
+  try {
+    const sheetList = await fetchSheetsList();
+    allSheets = [];
+    for (const s of sheetList) {
+      try {
+        const csv = await fetchSheetCSV(s.gid);
+        const rows = parseCSV(csv);
+        const validRows = rows.filter(r => r.some(c => c !== ''));
+        if (validRows.length >= 1) allSheets.push({ name: s.name, gid: s.gid, rows: validRows });
+      } catch(e) { console.warn('Folha ignorada:', s.name, e); }
+    }
+    if (!allSheets.length) throw new Error('Nenhuma folha com dados encontrada.');
+
+    const ts = new Date().toLocaleTimeString('pt-PT');
+    document.getElementById('main-sub').textContent = `${allSheets.length} folha(s) · actualizado às ${ts}`;
+    document.getElementById('status-dot').style.display = 'block';
+    document.getElementById('tabs-bar').style.display = 'block';
+
+    currentSheetIdx = 0; searchQuery = ''; currentPage = 0; sortCol = -1;
+    renderTabs();
+    renderSheet(0);
+  } catch(e) {
+    document.getElementById('main-content').innerHTML = `
+      <div class="state-screen">
+        <div class="error-icon">⚠️</div>
+        <div class="state-title">Não foi possível carregar os dados</div>
+        <div class="state-sub">${e.message}<br><br>Confirma que o ficheiro está partilhado como <strong>"Qualquer pessoa com o link pode ver"</strong>.</div>
+        <button class="btn btn-solid" onclick="loadData()">Tentar novamente</button>
+      </div>`;
+  }
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = allSheets.map((s,i) =>
+    `<button class="tab ${i===currentSheetIdx?'active':''}" onclick="switchSheet(${i})">${s.name}</button>`
+  ).join('');
+}
+function switchSheet(i) {
+  chartInstances.forEach(c => { try { c.destroy(); } catch(e){} });
+  chartInstances = [];
+  currentSheetIdx = i; currentPage = 0; searchQuery = ''; sortCol = -1; sortDir = 1;
+  renderTabs();
+  renderSheet(i);
+}
+
+// ── RENDER SHEET ──────────────────────────────────────────────
+function renderSheet(idx) {
+  const sheet = allSheets[idx];
+  const rows = sheet.rows;
+  if (rows.length < 1) { document.getElementById('main-content').innerHTML = '<div class="state-screen"><div class="state-sub">Folha sem dados.</div></div>'; return; }
+
+  const headers = rows[0];
+  const data = rows.slice(1).filter(r => r.some(c => c !== ''));
+  const numCols = headers.map((_,i) => ({ i, isNum: colIsNumeric(data, i) }));
+  const numericIdxs = numCols.filter(c => c.isNum).map(c => c.i);
+  const textIdxs = numCols.filter(c => !c.isNum).map(c => c.i);
+
+  let html = '<div class="fade-in">';
+
+  // KPI CARDS
+  if (numericIdxs.length > 0) {
+    html += '<div class="kpi-grid">';
+    numericIdxs.slice(0, 8).forEach(ci => {
+      const vals = data.map(r => toNum(r[ci])).filter(v => v !== 0);
+      if (!vals.length) return;
+      const sum = vals.reduce((a,b)=>a+b,0);
+      const avg = sum / vals.length;
+      const max = Math.max(...vals);
+      html += `<div class="kpi-card">
+        <div class="kpi-label">${headers[ci]}</div>
+        <div class="kpi-value">${fmtNum(sum)}</div>
+        <div class="kpi-meta">Média ${fmtNum(avg)} · Máx ${fmtNum(max)}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // CHARTS — only if data fits
+  if (numericIdxs.length > 0 && textIdxs.length > 0 && data.length >= 2 && data.length <= 60) {
+    const labelIdx = textIdxs[0];
+    const chartSets = numericIdxs.slice(0, 2);
+    html += '<div class="two-col">';
+    chartSets.forEach((ci, chartNum) => {
+      const chartId = `chart_${idx}_${chartNum}_${Date.now()}`;
+      const labels = data.map(r => (r[labelIdx]||'').slice(0,20));
+      const values = data.map(r => toNum(r[ci]));
+      const isHoriz = data.length > 10;
+      const h = isHoriz ? Math.max(280, data.length * 30 + 60) : 240;
+      html += `<div class="panel">
+        <div class="panel-header"><span class="panel-title">${headers[ci]} por ${headers[labelIdx]}</span></div>
+        <div class="panel-body">
+          <div class="chart-container" style="height:${h}px">
+            <canvas id="${chartId}" role="img" aria-label="Gráfico ${headers[ci]} por ${headers[labelIdx]}"></canvas>
+          </div>
+        </div>
+      </div>`;
+      setTimeout(() => {
+        const ctx = document.getElementById(chartId);
+        if (!ctx) return;
+        const colors = values.map((_,i) => `hsl(${210 + i * 8}, 65%, ${45 + (i%3)*8}%)`);
+        const chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{ label: headers[ci], data: values, backgroundColor: colors, borderRadius: 4, borderSkipped: false }]
+          },
+          options: {
+            indexAxis: isHoriz ? 'y' : 'x',
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 11, family: 'DM Sans' }, color: '#9c9b96', maxRotation: 40 } },
+              y: { grid: { color: isHoriz ? 'rgba(0,0,0,0.04)' : 'rgba(0,0,0,0)' }, ticks: { font: { size: 11, family: 'DM Sans' }, color: '#9c9b96' } }
+            }
+          }
+        });
+        chartInstances.push(chart);
+      }, 80);
+    });
+    html += '</div>';
+  }
+
+  // TABLE
+  html += `<div class="table-panel">
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+        <span class="table-name">${sheet.name}</span>
+        <span class="record-count" id="record-count">${data.length} registos</span>
+      </div>
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input class="search-input" id="search-input" type="search" placeholder="Filtrar..." value="${searchQuery}" oninput="onSearch(this.value)">
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table id="data-table">
+        <thead><tr id="thead-row"></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </div>`;
+
+  html += '</div>';
+  document.getElementById('main-content').innerHTML = html;
+
+  // Render table headers
+  const theadRow = document.getElementById('thead-row');
+  headers.forEach((h, i) => {
+    const th = document.createElement('th');
+    th.textContent = h;
+    if (numericIdxs.includes(i)) th.style.textAlign = 'right';
+    th.onclick = () => onSort(i);
+    theadRow.appendChild(th);
+  });
+
+  renderTable(headers, data, numericIdxs);
+}
+
+function onSearch(q) {
+  searchQuery = q; currentPage = 0;
+  const sheet = allSheets[currentSheetIdx];
+  const headers = sheet.rows[0];
+  const data = sheet.rows.slice(1).filter(r => r.some(c => c !== ''));
+  const numericIdxs = headers.map((_,i) => ({ i, isNum: colIsNumeric(data, i) })).filter(c => c.isNum).map(c => c.i);
+  renderTable(headers, data, numericIdxs);
+}
+
+function onSort(col) {
+  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
+  const sheet = allSheets[currentSheetIdx];
+  const headers = sheet.rows[0];
+  const data = sheet.rows.slice(1).filter(r => r.some(c => c !== ''));
+  const numericIdxs = headers.map((_,i) => ({ i, isNum: colIsNumeric(data, i) })).filter(c => c.isNum).map(c => c.i);
+  // Update header classes
+  document.querySelectorAll('th').forEach((th, i) => {
+    th.className = i === sortCol ? (sortDir === 1 ? 'sort-asc' : 'sort-desc') : '';
+  });
+  renderTable(headers, data, numericIdxs);
+}
+
+function renderTable(headers, data, numericIdxs) {
+  let filtered = searchQuery
+    ? data.filter(r => r.some(c => c.toString().toLowerCase().includes(searchQuery.toLowerCase())))
+    : [...data];
+
+  if (sortCol >= 0) {
+    const isNum = numericIdxs.includes(sortCol);
+    filtered.sort((a,b) => {
+      const av = isNum ? toNum(a[sortCol]||0) : (a[sortCol]||'').toLowerCase();
+      const bv = isNum ? toNum(b[sortCol]||0) : (b[sortCol]||'').toLowerCase();
+      return av < bv ? -sortDir : av > bv ? sortDir : 0;
+    });
+  }
+
+  const total = filtered.length;
+  const start = currentPage * PAGE_SIZE;
+  const pageData = filtered.slice(start, start + PAGE_SIZE);
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  // Count el
+  const countEl = document.getElementById('record-count');
+  if (countEl) countEl.textContent = searchQuery ? `${total} de ${data.length} registos` : `${data.length} registos`;
+
+  const tbody = document.getElementById('tbody');
+  if (!tbody) return;
+  if (!pageData.length) {
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="${headers.length}">Sem resultados para "${searchQuery}"</td></tr>`;
+  } else {
+    tbody.innerHTML = pageData.map(row => {
+      return '<tr>' + headers.map((h, i) => {
+        const val = (row[i] !== undefined ? row[i] : '');
+        if (numericIdxs.includes(i) && val !== '') {
+          return `<td class="td-num">${val}</td>`;
+        }
+        const badge = badgeFor(val);
+        if (badge) return `<td><span class="badge badge-${badge}">${val}</span></td>`;
+        return `<td>${val}</td>`;
+      }).join('') + '</tr>';
+    }).join('');
+  }
+
+  const pag = document.getElementById('pagination');
+  if (!pag) return;
+  if (totalPages <= 1) { pag.innerHTML = ''; return; }
+  pag.innerHTML = `
+    <span class="pagination-info">${start+1}–${Math.min(start+PAGE_SIZE,total)} de ${total} registos</span>
+    <button class="page-btn" onclick="changePage(-1)" ${currentPage===0?'disabled':''}>← Anterior</button>
+    <button class="page-btn" onclick="changePage(1)" ${currentPage>=totalPages-1?'disabled':''}>Seguinte →</button>`;
+}
+
+function changePage(dir) {
+  const sheet = allSheets[currentSheetIdx];
+  const headers = sheet.rows[0];
+  const data = sheet.rows.slice(1).filter(r => r.some(c => c !== ''));
+  const numericIdxs = headers.map((_,i) => ({ i, isNum: colIsNumeric(data, i) })).filter(c => c.isNum).map(c => c.i);
+  const filtered = searchQuery ? data.filter(r => r.some(c => c.toString().toLowerCase().includes(searchQuery.toLowerCase()))) : data;
+  const total = Math.ceil(filtered.length / PAGE_SIZE);
+  currentPage = Math.max(0, Math.min(total-1, currentPage+dir));
+  renderTable(headers, data, numericIdxs);
+}
+
+// BOOT
+loadData();
+</script>
+</body>
+</html>
