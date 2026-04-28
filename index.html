@@ -229,19 +229,25 @@ function renderRaw(){
   const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
   const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
 
+  // Invalid values to exclude
+  const INVALID_ATYPES=new Set(['i5','thin client','project - united parcel service','project - unicre – instituição financeira de crédito','project - unicre - instituição financeira de crédito','5cg9310dg6','0','']);
+  const INVALID_LOCS=new Set(['sem info','#error','mais de 3 anos','']);
+  function validAssetType(v){ return v&&!INVALID_ATYPES.has(v.toLowerCase().trim()); }
+  function validLocType(v){ return v&&!INVALID_LOCS.has(v.toLowerCase().trim()); }
+
   // PC types filter for section 5
-  const PC_TYPES=/thin.?client|portátil|portatil|minipc|mini.?pc|desktop/i;
+  const PC_TYPES=/^(thin.?client|portátil|portatil|minipc|mini.?pc|desktop)$/i;
 
-  // Collect all unique Asset Types
-  const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(Boolean))].sort();
+  // Collect all unique valid Asset Types
+  const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(validAssetType))].sort();
 
-  // ── 1. WAH STATUS × ASSET TYPE ──
-  // Structure: { wahStatus: { assetType: count } }
+  // ── 1. WAH STATUS × ASSET TYPE (valid types only) ──
   const wahByType={};
   const wahTotals={};
   data.forEach(r=>{
     const wah=(r[WAH]||'').trim(); if(!wah)return;
-    const at=(r[ATYPE]||'').trim()||'(sem tipo)';
+    const at=(r[ATYPE]||'').trim();
+    if(!validAssetType(at))return;
     if(!wahByType[wah])wahByType[wah]={};
     wahByType[wah][at]=(wahByType[wah][at]||0)+1;
     wahTotals[wah]=(wahTotals[wah]||0)+1;
@@ -250,12 +256,13 @@ function renderRaw(){
   const actTotal=wahStatuses.filter(k=>/active/i.test(k)).reduce((s,k)=>s+(wahTotals[k]||0),0);
   const termTotal=wahStatuses.filter(k=>/terminat/i.test(k)).reduce((s,k)=>s+(wahTotals[k]||0),0);
 
-  // ── 2. LOCATION TYPE × ASSET TYPE ──
+  // ── 2. LOCATION TYPE × ASSET TYPE (valid types only) ──
   const locByType={};
   const locTotals={};
   data.forEach(r=>{
-    const loc=(r[LOC]||'').trim()||'(sem info)';
-    const at=(r[ATYPE]||'').trim()||'(sem tipo)';
+    const loc=(r[LOC]||'').trim();
+    const at=(r[ATYPE]||'').trim();
+    if(!validLocType(loc)||!validAssetType(at))return;
     if(!locByType[loc])locByType[loc]={};
     locByType[loc][at]=(locByType[loc][at]||0)+1;
     locTotals[loc]=(locTotals[loc]||0)+1;
@@ -268,8 +275,7 @@ function renderRaw(){
   const withInfo=term.filter(r=>{const v=(r[RET]||'').trim();return v&&!v.startsWith('#');});
   const noInfo  =term.filter(r=>{const v=(r[RET]||'').trim();return!v||v.startsWith('#');});
 
-  // ── 4. WAHA + Terminated list (Location=WAHA AND WAH=Terminated) ──
-  // Group by BMS+Name, collect assets
+  // ── 4. WAHA + Terminated list ──
   const wahaTerminated=data.filter(r=>/waha/i.test(r[LOC]||'')&&/terminat/i.test(r[WAH]||''));
   const tmap={};
   wahaTerminated.forEach(r=>{
@@ -284,29 +290,25 @@ function renderRaw(){
   const totalWahaAssets=wahaTerminated.length;
 
   // ── 5. PC ASSETS × LIFE CYCLE ──
-  // Filter only PC types, treat LC as text
-  const LC_OVER =/^(-[4-9]|-[1-9]\d|mais de 3|>3|over)/i;
-  const LC_OK   =/^(-[0-3](?!\d)|0|1|2|3\b|menos|at[eé] 3|<=3|under|ok)/i;
+  // LC values in the file are literally: "mais 3 anos" (over 3) or "menos 3 anos" (under 3)
   const pcData=data.filter(r=>PC_TYPES.test((r[ATYPE]||'').trim()));
   const dmap={};
   pcData.forEach(r=>{
     const desc=(r[ATYPE]||'').trim()||'(sem tipo)';
-    const lc=(r[LC]||'').trim();
-    if(!dmap[desc])dmap[desc]={total:0,over3:0,under3:0,unk:0,lc_values:{}};
+    const lc=(r[LC]||'').trim().toLowerCase();
+    if(!dmap[desc])dmap[desc]={total:0,over3:0,under3:0,unk:0};
     dmap[desc].total++;
-    // Count LC text values for reference
-    dmap[desc].lc_values[lc||'(vazio)']=(dmap[desc].lc_values[lc||'(vazio)']||0)+1;
     if(!lc){dmap[desc].unk++;return;}
-    // Try numeric: negative = years ago (older), positive = years remaining
-    const num=parseFloat(lc.replace(/[^\d.\-]/g,'').replace(',','.'));
-    if(!isNaN(num)){
-      // Negative or 0 means asset is past life cycle, positive means still within
-      // "-3 anos" = 3 years over; convention: negative = over lifecycle
-      if(num<-3||num>3){dmap[desc].over3++;}
-      else{dmap[desc].under3++;}
-    } else if(LC_OVER.test(lc)){dmap[desc].over3++;}
-    else if(LC_OK.test(lc)){dmap[desc].under3++;}
-    else{dmap[desc].unk++;}
+    if(lc.includes('mais')){dmap[desc].over3++;}
+    else if(lc.includes('menos')){dmap[desc].under3++;}
+    else{
+      // fallback: try numeric (negative = older)
+      const num=parseFloat(lc.replace(/[^\d.\-]/g,'').replace(',','.'));
+      if(!isNaN(num)){
+        if(num<-3){dmap[desc].over3++;}
+        else{dmap[desc].under3++;}
+      } else {dmap[desc].unk++;}
+    }
   });
   const dlist=Object.entries(dmap).sort((a,b)=>b[1].total-a[1].total);
 
