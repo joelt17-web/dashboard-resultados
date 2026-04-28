@@ -213,7 +213,7 @@ async function init(){
     ls="";lp=0;ts="";tp=0;ds="";dp=0;
     showTab("raw");
   }catch(e){
-    document.getElementById("app").innerHTML=`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que os ficheiros CSV estão publicados na web via <strong>Ficheiro → Publicar na Web → CSV</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
+    document.getElementById("app").innerHTML<`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que os ficheiros CSV estão publicados na web via <strong>Ficheiro → Publicar na Web → CSV</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
   }
 }
 
@@ -223,13 +223,12 @@ function showTab(t){
   if(t==='raw')renderRaw(); else renderKPI();
 }
 
-// ══ RAW DATA ══
 function renderRaw(){
   if(RAW.length<2){document.getElementById('app').innerHTML='<div class="state"><div class="ss">Sem dados em RAW DATA.</div></div>';return;}
   const data=toObj(RAW);
   const H=RAW[0];
   const WAH  =fc(H,'WAH STATUS','WAH_STATUS','WAHSTATUS');
-  const LOC  =fc(H,'LOCATION TY','LOCATION TYPE','LOCATION_TY');
+  const LOC  =fc(H,'LOCATION TY','LOCATION TYPE;, LOCATION_TY';
   const RET  =fc(H,'RETENTION');
   const BMS  =fc(H,'BMS');
   const NAME =fc(H,'COLABNAME','COLAB NAME','NAME','COLABORADOR');
@@ -237,7 +236,6 @@ function renderRaw(){
   const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
   const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
 
-  // Normaliza: trim + lowercase + NFC unicode
   function norm(s){
     if(!s)return'';
     return s.trim().toLowerCase()
@@ -245,36 +243,25 @@ function renderRaw(){
       .normalize('NFC');
   }
 
-  // WHITELIST exacta — baseada nos valores reais do ficheiro Excel
-  // Asset Types válidos (22 valores, lidos directamente do ficheiro)
   const VALID_ASSET_TYPES=new Set([
     'armário','banco corrido','bloco gavetas','cadeira','cadeira de cafeteria',
     'desktop','diversos','docks','mesa','mesa de cafeteria','minipc','mobiliário',
     'monitor','móvel standard','outros','portátil','posto de trabalho','routers',
     'secretária','tablets','thin client',"tv's (wallboard)"
   ]);
-  // Location Types válidos (7 valores, lidos directamente do ficheiro)
   const VALID_LOC_TYPES=new Set([
     'apartamentos','armazém','avt','edificios','staging','waha','warehouse'
   ]);
-  // WAH Status válidos (lidos directamente do ficheiro — exclui #N/A, #VALUE!, #ERROR!, #REF!)
   const VALID_WAH=new Set(['active','terminated','leave of absence','candidate']);
 
   function isValidAssetType(v){return!!v&&VALID_ASSET_TYPES.has(norm(v));}
   function isValidLocType(v){return!!v&&VALID_LOC_TYPES.has(norm(v));}
   function isValidWAH(v){return!!v&&VALID_WAH.has(norm(v));}
-
-  // PC types para secção 5
   const PC_TYPES_SET=new Set(['thin client','portátil','minipc','desktop']);
   function isPCType(v){return PC_TYPES_SET.has(norm(v||''));}
 
-  // Life Cycle: valores reais no ficheiro são exactamente 'mais 3 anos' e 'menos 3 anos'
-  function normLC(v){return norm(v||'');}
-
-  // Colecta todos os Asset Types válidos únicos
   const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
 
-  // ── 1. WAH STATUS × ASSET TYPE (valid types only) ──
   const wahByType={};
   const wahTotals={};
   data.forEach(r=>{
@@ -289,7 +276,6 @@ function renderRaw(){
   const actTotal=wahStatuses.filter(k=>/active/i.test(k)).reduce((s,k)=>s+(wahTotals[k]||0),0);
   const termTotal=wahStatuses.filter(k=>/terminat/i.test(k)).reduce((s,k)=>s+(wahTotals[k]||0),0);
 
-  // ── 2. LOCATION TYPE × ASSET TYPE (valid types only) ──
   const locByType={};
   const locTotals={};
   data.forEach(r=>{
@@ -303,12 +289,10 @@ function renderRaw(){
   const locKeys=Object.keys(locByType).sort((a,b)=>locTotals[b]-locTotals[a]);
   const locGrandTotal=Object.values(locTotals).reduce((s,v)=>s+v,0);
 
-  // ── 3. TERMINATED + RETENTION ──
   const term=data.filter(r=>norm(r[WAH]||'')==='terminated');
   const withInfo=term.filter(r=>{const v=(r[RET]||'').trim();return v&&!v.startsWith('#');});
   const noInfo  =term.filter(r=>{const v=(r[RET]||'').trim();return!v||v.startsWith('#');});
 
-  // ── 4. WAHA + Terminated list ──
   const wahaTerminated=data.filter(r=>norm(r[LOC]||'')==='waha'&&norm(r[WAH]||'')==='terminated');
   const tmap={};
   wahaTerminated.forEach(r=>{
@@ -326,7 +310,6 @@ function renderRaw(){
   const pcData=data.filter(r=>isPCType((r[ATYPE]||'').trim()));
   const pcLocTypes=[...new Set(pcData.map(r=>(r[LOC]||'').trim()).filter(isValidLocType))].sort();
   const pcATypes=[...new Set(pcData.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
-  // dmap: { locType: { assetType: { over3, under3, unk } } }
   const dmap={};
   pcLocTypes.forEach(l=>{dmap[l]={};pcATypes.forEach(a=>{dmap[l][a]={over3:0,under3:0,unk:0};});});
   pcData.forEach(r=>{
@@ -338,12 +321,10 @@ function renderRaw(){
     else if(lc==='menos 3 anos')dmap[loc][at].under3++;
     else dmap[loc][at].unk++;
   });
-  const pcLocTotal=pcLocTypes.reduce((s,l)=>s+pcATypes.reduce((ss,a)=>ss+dmap[l][a].over3+dmap[l][a].under3+dmap[l][a].unk,0),0);
+  const pcLocTotal=pcLocTypes.reduce((s,l)=>s+pcATypes.reduce((ss,a)=>ss+dmap[l][a].over3+dmap[l][a].under3+dmap[l][a].unk, 0),0);
 
-  // ════ RENDER ════
   let h='<div class="fade">';
 
-  // ── 1. WAH STATUS × ASSET TYPE ──
   h+=`<div class="sec"><div class="sec-lbl">1 · WAH Status — Assets por Estado e Asset Type</div>
   <div class="kpi-row">
     <div class="kpi g"><div class="kpi-lbl">WAH Active</div><div class="kpi-val">${actTotal}</div><div class="kpi-sub">assets activos</div></div>
@@ -360,7 +341,6 @@ function renderRaw(){
     allTypes.forEach(t=>{ h+=`<td class="tr">${wahByType[wah][t]||0}</td>`; });
     h+=`<td class="tr" style="font-weight:600">${wahTotals[wah]}</td></tr>`;
   });
-  // Totals row
   h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td>`;
   allTypes.forEach(t=>{
     const tot=wahStatuses.reduce((s,w)=>s+(wahByType[w][t]||0),0);
@@ -369,7 +349,6 @@ function renderRaw(){
   h+=`<td class="tr">${data.length}</td></tr>`;
   h+=`</tbody></table></div></div></div><div class="div"></div>`;
 
-  // ── 2. LOCATION TYPE × ASSET TYPE ──
   h+=`<div class="sec"><div class="sec-lbl">2 · Assets por Location Type e Asset Type</div>
   <div class="panel"><div class="tw"><table>
   <thead><tr><th>Location Type</th>`;
@@ -382,7 +361,6 @@ function renderRaw(){
     allTypes.forEach(t=>{ h+=`<td class="tr">${locByType[loc][t]||0}</td>`; });
     h+=`<td class="tr" style="font-weight:600">${tot}</td><td class="tr">${pct}%</td></tr>`;
   });
-  // Totals row
   h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td>`;
   allTypes.forEach(t=>{
     const tot=locKeys.reduce((s,l)=>s+(locByType[l][t]||0),0);
@@ -391,7 +369,6 @@ function renderRaw(){
   h+=`<td class="tr">${locGrandTotal}</td><td class="tr">100%</td></tr>`;
   h+=`</tbody></table></div></div></div><div class="div"></div>`;
 
-  // ── 3. RETENTION ──
   const cov=termTotal?((withInfo.length/termTotal)*100).toFixed(0):0;
   h+=`<div class="sec"><div class="sec-lbl">3 · WAH Terminated — Retention Status (Acompanhamento)</div>
   <div class="kpi-row">
@@ -401,7 +378,6 @@ function renderRaw(){
     <div class="kpi b"><div class="kpi-lbl">Taxa de Cobertura</div><div class="kpi-val">${cov}%</div><div class="kpi-sub">terminados com info</div></div>
   </div></div><div class="div"></div>`;
 
-  // ── 4. WAHA + TERMINATED LIST ──
   const tf=tlist.filter(r=>!ts||r.bms.toLowerCase().includes(ts)||r.name.toLowerCase().includes(ts)||r.assets.some(a=>a.toLowerCase().includes(ts)));
   const tpaged=tf.slice(tp*PG,tp*PG+PG);
   const tpages=Math.ceil(tf.length/PG);
@@ -424,8 +400,7 @@ function renderRaw(){
     <button class="pb" onclick="tp++;renderRaw()" ${tp>=tpages-1?'disabled':''}>Seg →</button></div>`;
   h+=`</div></div><div class="div"></div>`;
 
-  // ── 5. PC ASSETS × LOCATION TYPE × ASSET TYPE × LIFE CYCLE ──
-  // Colunas: para cada Asset Type → ≤3 anos | >3 anos
+  // ── 5. PCs — Life Cycle por Location Type e Asset Type ──
   const colSpan=pcATypes.length*2;
   h+=`<div class="sec"><div class="sec-lbl">5 · PCs — Life Cycle por Location Type e Asset Type</div>
   <div class="panel">
@@ -456,9 +431,7 @@ function renderRaw(){
     });
     h+=`</tr>`;
   });
-  // Totals row
-  const totLocTotal=pcLocTotal;
-  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td><td class="tr">${totLocTotal}</td>`;
+  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td><td class="tr">${pcLocTotal}</td>`;
   pcATypes.forEach(a=>{
     const totU=pcLocTypes.reduce((s,l)=>s+dmap[l][a].under3,0);
     const totO=pcLocTypes.reduce((s,l)=>s+dmap[l][a].over3,0);
@@ -475,46 +448,21 @@ function renderRaw(){
   document.getElementById('app').innerHTML=h;
 }
 
-// ══ RECOVERS KPI ══
 function renderKPI(){
   if(KPI.length<2){document.getElementById('app').innerHTML='<div class="state"><div class="ss">Sem dados em RECOVERS KPI.</div></div>';return;}
   const H=KPI[0];
   const allData=toObj(KPI);
-
   function pN(v){
     if(!v&&v!==0)return 0;
-    const s=String(v).replace(/[€\s]/g,''); // remove € and all spaces first
-    // Now either "56306,26" (PT) or "56306.26" (EN) or "56,306.26" (EN with comma thousands)
-    // Detect: if comma exists and only 2 digits after last comma => decimal comma
+    const s=String(v).replace(/[€\s]/g,'');
     const commaIdx=s.lastIndexOf(',');
     const dotIdx=s.lastIndexOf('.');
     let normalized;
-    if(commaIdx>dotIdx){
-      // comma is decimal separator: remove dots (thousands), replace comma with dot
-      normalized=s.replace(/\./g,'').replace(',','.');
-    } else {
-      // dot is decimal separator or no decimal at all: remove commas (thousands)
-      normalized=s.replace(/,/g,'');
-    }
+    if(commaIdx>dotIdx){ normalized=s.replace(/\./g,'').replace(',','.'); }
+    else{ normalized=s.replace(/,/g,''); }
     return parseFloat(normalized)||0;
   }
   function fmtEur(v){return v.toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
-  function fmtPct(v){
-    if(!v&&v!==0)return'—';
-    const n=pN(v);
-    // value might already be 0-100 or 0-1
-    const pct=n>1?n:n*100;
-    return pct.toFixed(0)+'%';
-  }
-  function hasDat(r){
-    // row has data if any numeric column is non-zero
-    return['rescisoes','equipamentos','recuperados','processo'].some(k=>{
-      const col=Object.keys(r).find(h=>h.toLowerCase().includes(k.slice(0,5)));
-      return col&&pN(r[col])>0;
-    });
-  }
-
-  // Identify columns by keyword
   const mCol  = H.find(h=>/m[eê]s|month/i.test(h))||H[0];
   const cResc = H.find(h=>/rescis/i.test(h))||'';
   const cEquip= H.find(h=>/equipam/i.test(h))||'';
@@ -522,12 +470,8 @@ function renderKPI(){
   const cProc = H.find(h=>/processo|em proc/i.test(h))||'';
   const cPct  = H.find(h=>/percent|recupera.*%|%/i.test(h))||'';
   const cVal  = H.find(h=>/valor|€|retid/i.test(h))||'';
-
-  // Only rows with actual data + keep all 12 months for table
   const data12 = allData.filter(r=>(r[mCol]||'').trim());
   const dataWithValues = data12.filter(r=>cResc&&pN(r[cResc])>0);
-
-  // Totals from data with values
   const totResc  = dataWithValues.reduce((s,r)=>s+pN(r[cResc]),0);
   const totEquip = dataWithValues.reduce((s,r)=>s+pN(r[cEquip]),0);
   const totRec   = dataWithValues.reduce((s,r)=>s+pN(r[cRec]),0);
@@ -535,10 +479,7 @@ function renderKPI(){
   const totVal   = dataWithValues.reduce((s,r)=>s+pN(r[cVal]),0);
   const avgPct   = totEquip>0?(totRec/totEquip*100):0;
   const mesesAtivos = dataWithValues.length;
-
   let h='<div class="fade">';
-
-  // ── KPI CARDS ──
   h+=`<div class="sec"><div class="sec-lbl">Totais Acumulados ${new Date().getFullYear()} — ${mesesAtivos} ${mesesAtivos===1?'mês':'meses'} com dados</div>
   <div class="kpi-row">
     <div class="kpi b"><div class="kpi-lbl">Total Rescisões</div><div class="kpi-val">${totResc.toLocaleString('pt-PT')}</div><div class="kpi-sub">rescisões processadas</div></div>
@@ -546,11 +487,9 @@ function renderKPI(){
     <div class="kpi g"><div class="kpi-lbl">Recuperados</div><div class="kpi-val">${totRec.toLocaleString('pt-PT')}</div><div class="kpi-sub">equipamentos recuperados</div></div>
     <div class="kpi a"><div class="kpi-lbl">Em Processo</div><div class="kpi-val">${totProc.toLocaleString('pt-PT')}</div><div class="kpi-sub">ainda em acompanhamento</div></div>
     <div class="kpi ${avgPct>=80?'g':avgPct>=60?'a':'r'}"><div class="kpi-lbl">% Recuperação</div><div class="kpi-val">${avgPct.toFixed(0)}%</div><div class="kpi-sub">taxa global acumulada</div></div>
-    ${cVal?`<div class="kpi g"><div class="kpi-lbl">Valor Retido</div><div class="kpi-val" style="font-size:20px">${fmtEur(totVal)}</div><div class="kki-sub" style="font-size:12px;color:var(--text3);margin-top:4px">valor total recuperado</div></div>`:''}
+    ${cVal?`<div class="kpi g"><div class="kpi-lbl">Valor Retido</div><div class="kpi-val" style="font-size:20px">${fmtEur(totVal)}</div><div class="kpi-sub">valor total recuperado</div></div>`:''}
   </div></div><div class="div"></div>`;
-
-  // ── CHARTS side by side ──
-  const c1='ch1'+Date.now(), c2='ch2'+Date.now();
+  const c1='cht1'+Date.now(), c2='cht2'+Date.now();
   h+=`<div class="sec"><div class="sec-lbl">Evolução Mensal</div>
   <div class="cols2">
     <div class="panel"><div class="ph"><span class="ph-title">Rescisões vs Recuperados vs Em Processo</span></div>
@@ -558,49 +497,35 @@ function renderKPI(){
     <div class="panel"><div class="ph"><span class="ph-title">Taxa de Recuperação (%)</span></div>
       <div style="padding:1rem;height:260px;position:relative"><canvas id="${c2}"></canvas></div></div>
   </div></div>`;
-
   setTimeout(()=>{
     if(CI){try{CI.destroy();}catch(e){}CI=null;}
-    const activeRows=dataWithValues;
-    const labels=activeRows.map(r=>(r[mCol]||'').replace(/^\d+\s*-\s*/,''));
-
-    // Chart 1: bars
+    const labels=dataWithValues.map(r=>(r[mCol]||'').replace(/^\d+\s*-\s*/,''));
     const ctx1=document.getElementById(c1);
     if(ctx1){
       CI=new Chart(ctx1,{type:'bar',data:{labels,datasets:[
-        {label:'Rescisões',data:activeRows.map(r=>pN(r[cResc])),backgroundColor:'#93c5fd',borderRadius:3},
-        {label:'Recuperados',data:activeRows.map(r=>pN(r[cRec])),backgroundColor:'#86efac',borderRadius:3},
-        {label:'Em Processo',data:activeRows.map(r=>pN(r[cProc])),backgroundColor:'#fcd34d',borderRadius:3},
+        {label:'Rescisões',data:dataWithValues.map(r=>pN(r[cResc])),backgroundColor:'#93c5fd',borderRadius:3},
+        {label:'Recuperados',data:dataWithValues.map(r=>pN(r[cRec])),backgroundColor:'#86efac',borderRadius:3},
+        {label:'Em Processo',data:dataWithValues.map(r=>pN(r[cProc])),backgroundColor:'#fcd34d',borderRadius:3},
       ]},options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{position:'top',labels:{font:{family:'DM Sans',size:11},boxWidth:10}}},
-        scales:{x:{grid:{display:false},ticks:{font:{size:11},color:'#9c9b96'}},
-                y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:11},color:'#9c9b96'}}}}});
+        scales:{x:{grid:{display:false},ticks:{size:11,color:'#9c9b96'}},
+                yz{grid:{color:'rgba(0,0,0,0.04)'},ticks:{size:11,color:'#9c9b96"}}}}});
     }
-    // Chart 2: % line
     const ctx2=document.getElementById(c2);
     if(ctx2){
-      const pctData=activeRows.map(r=>{
-        const v=pN(r[cPct]);
-        return v>1?v:v*100;
-      });
+      const pctData=dataWithValues.map(r=>{const v=pN(r[cPct]);return v>1?v:v*100;});
       new Chart(ctx2,{type:'line',data:{labels,datasets:[{
         label:'% Recuperação',data:pctData,
         borderColor:'#3b82f6',backgroundColor:'#3b82f620',
         borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#3b82f6',tension:.3,fill:true
       }]},options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(0)}%`}}},
-        scales:{
-          x:{grid:{display:false},ticks:{font:{size:11},color:'#9c9b96'}},
-          y:{min:0,max:100,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:11},color:'#9c9b96',callback:v=>v+'%'}}
-        }}});
+        scales:{x:{grid:{display:false},ticks:{size:11,color:'#9c9b96'}},yz{min:0,max:100,grid:zcolor:'rgba(0,0,0,0.04)'},ticks:{size:11,color:'#9c9b96',callback:v=>v+'%'}}}}});
     }
   },80);
-
-  // ── MONTHLY TABLE ──
   h+=`<div class="div"></div><div class="sec"><div class="sec-lbl">Tabela Mensal Detalhada</div>
   <div class="panel"><div class="tw"><table>
-  <thead><tr>
-    <th>Mês</th>
+  <thead><tr><th>Mês</th>
     ${cResc?`<th class="tr">Total Rescisões</th>`:''}
     ${cEquip?`<th class="tr">Total Equipamentos</th>`:''}
     ${cRec?`<th class="tr">Recuperados</th>`:''}
@@ -608,42 +533,31 @@ function renderKPI(){
     ${cPct?`<th class="tr">% Recuperação</th>`:''}
     ${cVal?`<th class="tr">Valor Retido (€)</th>`:''}
   </tr></thead><tbody>`;
-
   data12.forEach(r=>{
-    const mes=(r[mCol]||'').trim();
-    if(!mes)return;
+    const mes=(r[[mCol]||'').trim(); if(!mes)return;
     const hasData=cResc&&pN(r[cResc])>0;
     const dimStyle=hasData?'':' style="color:var(--text3)"';
     const dash='<span style="color:var(--text3)">—</span>';
-    const resc =cResc&&pN(r[cResc])>0  ?pN(r[cResc]).toLocaleString('pt-PT'):dash;
+    const resc =cResc&&pN(r[cResc])>0?pN(r[cResc]).toLocaleString('pt-PT'):dash;
     const equip=cEquip&&pN(r[cEquip])>0?pN(r[cEquip]).toLocaleString('pt-PT'):dash;
-    const rec  =cRec&&pN(r[cRec])>0   ?pN(r[cRec]).toLocaleString('pt-PT'):dash;
-    const proc =cProc&&pN(r[cProc])>0 ?pN(r[cProc]).toLocaleString('pt-PT'):dash;
-    const valR =cVal&&pN(r[cVal])>0   ?fmtEur(pN(r[cVal])):dash;
-
-    // % badge
+    const rec  =cRec&&pN(r[cRec])>0?pN(r[cRec]).toLocaleString('pt-PT'):dash;
+    const proc =cProc&&pN(r[cProc])>0?pN(r[cProc]).toLocaleString('pt-PT'):dash;
+    const valR =cVal&&pN(r[cVal])>0?fmtEur(pN(r[cVal])):dash;
     let pctHtml=dash;
     if(cPct&&r[cPct]){
       const pv=pN(r[cPct]);const pct=pv>1?pv:pv*100;
-      if(pct>0){
-        const cls=pct>=80?'bg':pct>=60?'ba':'br';
-        pctHtml=`<span class="badge ${cls}">${pct.toFixed(0)}%</span>`;
-      }
+      if(pct>0){const cls=pct>=80?'bg':pct>=60?'ba':'br';pctHtml=`<span class="badge ${cls}">${pct.toFixed(0)}%</span>`;}
     }
-
     h+=`<tr${dimStyle}><td><strong>${mes}</strong></td>
       ${cResc?`<td class="tr">${resc}</td>`:''}
       ${cEquip?`<td class="tr">${equip}</td>`:''}
       ${cRec?`<td class="tr" style="${hasData?'color:var(--green);font-weight:500':'color:var(--text3)'}">${rec}</td>`:''}
-      ${cProc?`<td class="tr" style="${hasData?'color:var(--amber)':'color:var(--text3)'}">${proc}</td>`:''}
+      ${cProc?`<td class="tr" style="${hasData?'color:var(--amber);font-weight:500':'color:var(--text3)'}">${proc}</td>`:''}
       ${cPct?`<td class="tr">${pctHtml}</td>`:''}
       ${cVal?`<td class="tr" style="${hasData?'font-weight:500':'color:var(--text3)'}">${valR}</td>`:''}
     </tr>`;
   });
-
-  // Totals row
-  h+=`<tr class="mt">
-    <td>TOTAL / MÉDIA</td>
+  h+=`<tr class="mt"><td>TOTAL / MÉDIA</td>
     ${cResc?`<td class="tr">${totResc.toLocaleString('pt-PT')}</td>`:''}
     ${cEquip?`<td class="tr">${totEquip.toLocaleString('pt-PT')}</td>`:''}
     ${cRec?`<td class="tr" style="color:var(--green)">${totRec.toLocaleString('pt-PT')}</td>`:''}
@@ -652,11 +566,10 @@ function renderKPI(){
     ${cVal?`<td class="tr">${fmtEur(totVal)}</td>`:''}
   </tr>`;
   h+=`</tbody></table></div></div></div></div>`;
-
   document.getElementById('app').innerHTML=h;
 }
 
-init();
+inj]it();
 </script>
 </body>
 </html>
