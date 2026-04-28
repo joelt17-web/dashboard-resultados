@@ -252,86 +252,48 @@ function renderRaw(){
   const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
   const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
 
-  // Normalize: lowercase, trim, replace curly quotes/apostrophes with straight, normalize unicode
+  // Normaliza: trim + lowercase + NFC unicode
   function norm(s){
     if(!s)return'';
-    return s.trim()
-      .toLowerCase()
-      .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g,"'") // curly apostrophes → straight
-      .replace(/[\u201C\u201D\u201E\u201F\u2033\u2036]/g,'"') // curly quotes → straight
-      .normalize('NFC'); // normalize unicode composition
+    return s.trim().toLowerCase()
+      .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g,"'")
+      .normalize('NFC');
   }
 
-  // WHITELIST — only exact matches allowed (after normalization)
-  const VALID_ASSET_TYPES = new Set([
+  // WHITELIST exacta — baseada nos valores reais do ficheiro Excel
+  // Asset Types válidos (22 valores, lidos directamente do ficheiro)
+  const VALID_ASSET_TYPES=new Set([
     'armário','banco corrido','bloco gavetas','cadeira','cadeira de cafeteria',
     'desktop','diversos','docks','mesa','mesa de cafeteria','minipc','mobiliário',
     'monitor','móvel standard','outros','portátil','posto de trabalho','routers',
     'secretária','tablets','thin client',"tv's (wallboard)"
   ]);
-  function isValidAssetType(v){
-    if(!v)return false;
-    return VALID_ASSET_TYPES.has(norm(v));
-  }
-  const VALID_LOC_TYPES = new Set([
+  // Location Types válidos (7 valores, lidos directamente do ficheiro)
+  const VALID_LOC_TYPES=new Set([
     'apartamentos','armazém','avt','edificios','staging','waha','warehouse'
   ]);
-  function isValidLocType(v){
-    if(!v)return false;
-    return VALID_LOC_TYPES.has(norm(v));
-  }
+  // WAH Status válidos (lidos directamente do ficheiro — exclui #N/A, #VALUE!, #ERROR!, #REF!)
+  const VALID_WAH=new Set(['active','terminated','leave of absence','candidate']);
 
-  // PC types filter for section 5
+  function isValidAssetType(v){return!!v&&VALID_ASSET_TYPES.has(norm(v));}
+  function isValidLocType(v){return!!v&&VALID_LOC_TYPES.has(norm(v));}
+  function isValidWAH(v){return!!v&&VALID_WAH.has(norm(v));}
+
+  // PC types para secção 5
   const PC_TYPES_SET=new Set(['thin client','portátil','minipc','desktop']);
   function isPCType(v){return PC_TYPES_SET.has(norm(v||''));}
 
-  // LC values: normalize before comparing
+  // Life Cycle: valores reais no ficheiro são exactamente 'mais 3 anos' e 'menos 3 anos'
   function normLC(v){return norm(v||'');}
 
-  // Collect all unique valid Asset Types
+  // Colecta todos os Asset Types válidos únicos
   const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
-
-  // DEBUG: collect unique raw values
-  const rawATypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()))].sort();
-  const rawLC=[...new Set(data.map(r=>(r[LC]||'').trim()))].filter(Boolean).sort();
-  const rawLOC=[...new Set(data.map(r=>(r[LOC]||'').trim()))].filter(Boolean).sort();
-  const rejected=rawATypes.filter(v=>v&&!isValidAssetType(v));
-  const rejectedHex=rejected.map(v=>v+' ['+[...v].map(c=>c.codePointAt(0).toString(16).toUpperCase()).join(' ')+']');
-
-  // Show debug panel
-  document.getElementById('app').innerHTML=`<div class="fade" style="padding:1.5rem;font-family:DM Mono,monospace;font-size:12px;line-height:1.8">
-  <div style="background:#fff3cd;border:1px solid #f59e0b;border-radius:8px;padding:1rem;margin-bottom:1rem">
-    <strong>🔍 DEBUG MODE</strong> — copia este conteúdo e envia para corrigir os filtros. Depois remove o debug.
-  </div>
-  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
-    <strong>HEADERS encontrados:</strong><br>
-    ATYPE col: <b>${ATYPE}</b> | LOC col: <b>${LOC}</b> | LC col: <b>${LC}</b> | WAH col: <b>${WAH}</b>
-  </div>
-  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
-    <strong>RAW ASSET TYPES (${rawATypes.length} únicos):</strong><br>
-    ${rawATypes.map(v=>`<span style="color:${isValidAssetType(v)?'green':'red'}">${isValidAssetType(v)?'✓':'✗'} "${v}"</span>`).join('<br>')}
-  </div>
-  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
-    <strong>REJEITADOS com hex (${rejected.length}):</strong><br>
-    ${rejectedHex.map(v=>`<span style="color:red">${v}</span>`).join('<br>') || '<span style="color:green">Nenhum rejeitado!</span>'}
-  </div>
-  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
-    <strong>RAW LOCATION TYPES (${rawLOC.length} únicos):</strong><br>
-    ${rawLOC.map(v=>`<span style="color:${isValidLocType(v)?'green':'red'}">${isValidLocType(v)?'✓':'✗'} "${v}"</span>`).join('<br>')}
-  </div>
-  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
-    <strong>RAW LIFE CYCLE (${rawLC.length} únicos):</strong><br>
-    ${rawLC.map(v=>`"${v}" [${[...v].map(c=>c.codePointAt(0).toString(16).toUpperCase()).join(' ')}]`).join('<br>')}
-  </div>
-  <button class="btn-solid" onclick="renderRaw()" style="margin-top:1rem">← Voltar ao Dashboard</button>
-  </div>`;
-  return;
 
   // ── 1. WAH STATUS × ASSET TYPE (valid types only) ──
   const wahByType={};
   const wahTotals={};
   data.forEach(r=>{
-    const wah=(r[WAH]||'').trim(); if(!wah)return;
+    const wah=(r[WAH]||'').trim(); if(!isValidWAH(wah))return;
     const at=(r[ATYPE]||'').trim();
     if(!isValidAssetType(at))return;
     if(!wahByType[wah])wahByType[wah]={};
@@ -357,12 +319,12 @@ function renderRaw(){
   const locGrandTotal=Object.values(locTotals).reduce((s,v)=>s+v,0);
 
   // ── 3. TERMINATED + RETENTION ──
-  const term=data.filter(r=>/terminat/i.test(r[WAH]||''));
+  const term=data.filter(r=>norm(r[WAH]||'')==='terminated');
   const withInfo=term.filter(r=>{const v=(r[RET]||'').trim();return v&&!v.startsWith('#');});
   const noInfo  =term.filter(r=>{const v=(r[RET]||'').trim();return!v||v.startsWith('#');});
 
   // ── 4. WAHA + Terminated list ──
-  const wahaTerminated=data.filter(r=>/waha/i.test(r[LOC]||'')&&/terminat/i.test(r[WAH]||''));
+  const wahaTerminated=data.filter(r=>norm(r[LOC]||'')==='waha'&&norm(r[WAH]||'')==='terminated');
   const tmap={};
   wahaTerminated.forEach(r=>{
     const bms=(r[BMS]||'').trim()||'—';
