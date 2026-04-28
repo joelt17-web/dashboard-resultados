@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard de Resultados</title>
+<title>TP - Asset Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -106,7 +106,7 @@ tr:hover td{background:var(--surface2)}
     <div class="hdr-l">
       <div class="live" id="ldot" style="display:none"></div>
       <div>
-        <div class="hdr-title">Dashboard de Resultados</div>
+        <div class="hdr-title">TP - Asset Tracker</div>
         <div class="hdr-sub" id="hsub">A carregar...</div>
       </div>
     </div>
@@ -116,7 +116,7 @@ tr:hover td{background:var(--surface2)}
 
 <div class="tabs-bar" id="tbar" style="display:none">
   <div class="tabs-in">
-    <button class="tab on" id="t1" onclick="showTab('raw')">RAW DATA</button>
+    <button class="tab on" id="t1" onclick="showTab('raw')">Overview</button>
     <button class="tab" id="t2" onclick="showTab('kpi')">RECOVERS KPI</button>
   </div>
 </div>
@@ -225,30 +225,54 @@ function renderRaw(){
   const RET  =fc(H,'RETENTION');
   const BMS  =fc(H,'BMS');
   const NAME =fc(H,'COLABNAME','COLAB NAME','NAME','COLABORADOR');
-  const DESC =fc(H,'DESCRIPTION','DESC','TIPO','TYPE');
+  const ATYPE=fc(H,'ASSET TYPE','ASSETTYPE','ASSET_TYPE');
   const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
   const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
 
-  // 1. WAH GROUPS
-  const wahG={};
-  data.forEach(r=>{const v=(r[WAH]||'').trim();if(!v)return;wahG[v]=(wahG[v]||0)+1;});
-  const actTotal=Object.entries(wahG).filter(([k])=>/active/i.test(k)).reduce((s,[,v])=>s+v,0);
-  const termTotal=Object.entries(wahG).filter(([k])=>/terminat/i.test(k)).reduce((s,[,v])=>s+v,0);
+  // PC types filter for section 5
+  const PC_TYPES=/thin.?client|portátil|portatil|minipc|mini.?pc|desktop/i;
 
-  // 2. LOCATION
-  const locG={};
-  data.forEach(r=>{const v=(r[LOC]||'').trim()||'(sem info)';locG[v]=(locG[v]||0)+1;});
-  const locS=Object.entries(locG).sort((a,b)=>b[1]-a[1]);
-  const locT=Object.values(locG).reduce((s,v)=>s+v,0);
+  // Collect all unique Asset Types
+  const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(Boolean))].sort();
 
-  // 3. TERMINATED + RETENTION
+  // ── 1. WAH STATUS × ASSET TYPE ──
+  // Structure: { wahStatus: { assetType: count } }
+  const wahByType={};
+  const wahTotals={};
+  data.forEach(r=>{
+    const wah=(r[WAH]||'').trim(); if(!wah)return;
+    const at=(r[ATYPE]||'').trim()||'(sem tipo)';
+    if(!wahByType[wah])wahByType[wah]={};
+    wahByType[wah][at]=(wahByType[wah][at]||0)+1;
+    wahTotals[wah]=(wahTotals[wah]||0)+1;
+  });
+  const wahStatuses=Object.keys(wahByType).sort();
+  const actTotal=wahStatuses.filter(k=>/active/i.test(k)).reduce((s,k)=>s+(wahTotals[k]||0),0);
+  const termTotal=wahStatuses.filter(k=>/terminat/i.test(k)).reduce((s,k)=>s+(wahTotals[k]||0),0);
+
+  // ── 2. LOCATION TYPE × ASSET TYPE ──
+  const locByType={};
+  const locTotals={};
+  data.forEach(r=>{
+    const loc=(r[LOC]||'').trim()||'(sem info)';
+    const at=(r[ATYPE]||'').trim()||'(sem tipo)';
+    if(!locByType[loc])locByType[loc]={};
+    locByType[loc][at]=(locByType[loc][at]||0)+1;
+    locTotals[loc]=(locTotals[loc]||0)+1;
+  });
+  const locKeys=Object.keys(locByType).sort((a,b)=>locTotals[b]-locTotals[a]);
+  const locGrandTotal=Object.values(locTotals).reduce((s,v)=>s+v,0);
+
+  // ── 3. TERMINATED + RETENTION ──
   const term=data.filter(r=>/terminat/i.test(r[WAH]||''));
-  const withInfo =term.filter(r=>{const v=(r[RET]||'').trim();return v&&!v.startsWith('#');});
-  const noInfo   =term.filter(r=>{const v=(r[RET]||'').trim();return!v||v.startsWith('#');});
+  const withInfo=term.filter(r=>{const v=(r[RET]||'').trim();return v&&!v.startsWith('#');});
+  const noInfo  =term.filter(r=>{const v=(r[RET]||'').trim();return!v||v.startsWith('#');});
 
-  // 4. TERM LIST (BMS + Name + Assets)
+  // ── 4. WAHA + Terminated list (Location=WAHA AND WAH=Terminated) ──
+  // Group by BMS+Name, collect assets
+  const wahaTerminated=data.filter(r=>/waha/i.test(r[LOC]||'')&&/terminat/i.test(r[WAH]||''));
   const tmap={};
-  term.forEach(r=>{
+  wahaTerminated.forEach(r=>{
     const bms=(r[BMS]||'').trim()||'—';
     const name=(r[NAME]||'').trim()||'—';
     const asset=(r[ASSET]||'').trim();
@@ -257,61 +281,85 @@ function renderRaw(){
     if(asset&&!tmap[key].assets.includes(asset))tmap[key].assets.push(asset);
   });
   const tlist=Object.values(tmap).sort((a,b)=>a.name.localeCompare(b.name));
+  const totalWahaAssets=wahaTerminated.length;
 
-  // 5. DESC + LC
+  // ── 5. PC ASSETS × LIFE CYCLE ──
+  // Filter only PC types, treat LC as text
+  const LC_OVER =/^(-[4-9]|-[1-9]\d|mais de 3|>3|over)/i;
+  const LC_OK   =/^(-[0-3](?!\d)|0|1|2|3\b|menos|at[eé] 3|<=3|under|ok)/i;
+  const pcData=data.filter(r=>PC_TYPES.test((r[ATYPE]||'').trim()));
   const dmap={};
-  data.forEach(r=>{
-    const desc=(r[DESC]||'').trim()||'(sem descrição)';
+  pcData.forEach(r=>{
+    const desc=(r[ATYPE]||'').trim()||'(sem tipo)';
     const lc=(r[LC]||'').trim();
-    if(!dmap[desc])dmap[desc]={total:0,over3:0,under3:0,unk:0};
+    if(!dmap[desc])dmap[desc]={total:0,over3:0,under3:0,unk:0,lc_values:{}};
     dmap[desc].total++;
+    // Count LC text values for reference
+    dmap[desc].lc_values[lc||'(vazio)']=(dmap[desc].lc_values[lc||'(vazio)']||0)+1;
     if(!lc){dmap[desc].unk++;return;}
-    // LC values like "-3 anos" or "3" — negative means older
+    // Try numeric: negative = years ago (older), positive = years remaining
     const num=parseFloat(lc.replace(/[^\d.\-]/g,'').replace(',','.'));
-    if(isNaN(num)){dmap[desc].unk++;}
-    else if(Math.abs(num)>3||num<-3){dmap[desc].over3++;}
-    else{dmap[desc].under3++;}
+    if(!isNaN(num)){
+      // Negative or 0 means asset is past life cycle, positive means still within
+      // "-3 anos" = 3 years over; convention: negative = over lifecycle
+      if(num<-3||num>3){dmap[desc].over3++;}
+      else{dmap[desc].under3++;}
+    } else if(LC_OVER.test(lc)){dmap[desc].over3++;}
+    else if(LC_OK.test(lc)){dmap[desc].under3++;}
+    else{dmap[desc].unk++;}
   });
   const dlist=Object.entries(dmap).sort((a,b)=>b[1].total-a[1].total);
 
+  // ════ RENDER ════
   let h='<div class="fade">';
 
-  // ── 1. WAH STATUS ──
-  h+=`<div class="sec"><div class="sec-lbl">1 · WAH Status — Assets por Estado</div>
+  // ── 1. WAH STATUS × ASSET TYPE ──
+  h+=`<div class="sec"><div class="sec-lbl">1 · WAH Status — Assets por Estado e Asset Type</div>
   <div class="kpi-row">
     <div class="kpi g"><div class="kpi-lbl">WAH Active</div><div class="kpi-val">${actTotal}</div><div class="kpi-sub">assets activos</div></div>
     <div class="kpi r"><div class="kpi-lbl">WAH Terminated</div><div class="kpi-val">${termTotal}</div><div class="kpi-sub">assets terminados</div></div>
     <div class="kpi b"><div class="kpi-lbl">Total Geral</div><div class="kpi-val">${data.length}</div><div class="kpi-sub">todos os assets</div></div>
-  </div>`;
-  if(Object.keys(wahG).length>2){
-    h+=`<div class="panel" style="margin-top:10px"><div class="ph"><span class="ph-title">Detalhe por sub-estado WAH</span></div><div class="tw"><table>
-    <thead><tr><th>Estado WAH</th><th class="tr">Assets</th><th class="tr">%</th></tr></thead><tbody>`;
-    Object.entries(wahG).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
-      const pct=((v/data.length)*100).toFixed(1);
-      const cls=/active/i.test(k)?'bg':/terminat/i.test(k)?'br':'bx';
-      h+=`<tr><td><span class="badge ${cls}">${k}</span></td><td class="tr">${v}</td><td class="tr">${pct}%</td></tr>`;
-    });
-    h+=`</tbody></table></div></div>`;
-  }
-  h+=`</div><div class="div"></div>`;
+  </div>
+  <div class="panel"><div class="tw"><table>
+  <thead><tr><th>WAH Status</th>`;
+  allTypes.forEach(t=>{ h+=`<th class="tr">${t}</th>`; });
+  h+=`<th class="tr">Total</th></tr></thead><tbody>`;
+  wahStatuses.forEach(wah=>{
+    const cls=/active/i.test(wah)?'bg':/terminat/i.test(wah)?'br':'bx';
+    h+=`<tr><td><span class="badge ${cls}">${wah}</span></td>`;
+    allTypes.forEach(t=>{ h+=`<td class="tr">${wahByType[wah][t]||0}</td>`; });
+    h+=`<td class="tr" style="font-weight:600">${wahTotals[wah]}</td></tr>`;
+  });
+  // Totals row
+  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td>`;
+  allTypes.forEach(t=>{
+    const tot=wahStatuses.reduce((s,w)=>s+(wahByType[w][t]||0),0);
+    h+=`<td class="tr">${tot}</td>`;
+  });
+  h+=`<td class="tr">${data.length}</td></tr>`;
+  h+=`</tbody></table></div></div></div><div class="div"></div>`;
 
-  // ── 2. LOCATION ──
-  h+=`<div class="sec"><div class="sec-lbl">2 · Assets por Location Type</div>
-  <div class="cols2">
-    <div class="panel"><div class="ph"><span class="ph-title">Distribuição por Localização</span><span class="ph-cnt">${locT} assets</span></div>
-    <div style="padding:1rem 1.1rem">`;
-  locS.forEach(([k,v])=>{
-    const pct=((v/locT)*100).toFixed(1);
-    h+=`<div class="prog-row"><div class="prog-lbl" title="${k}">${k}</div><div class="prog-bar-w"><div class="prog-bar" style="width:${pct}%"></div></div><div class="prog-v">${v}</div><div class="prog-p">${pct}%</div></div>`;
+  // ── 2. LOCATION TYPE × ASSET TYPE ──
+  h+=`<div class="sec"><div class="sec-lbl">2 · Assets por Location Type e Asset Type</div>
+  <div class="panel"><div class="tw"><table>
+  <thead><tr><th>Location Type</th>`;
+  allTypes.forEach(t=>{ h+=`<th class="tr">${t}</th>`; });
+  h+=`<th class="tr">Total</th><th class="tr">%</th></tr></thead><tbody>`;
+  locKeys.forEach(loc=>{
+    const tot=locTotals[loc];
+    const pct=((tot/locGrandTotal)*100).toFixed(1);
+    h+=`<tr><td>${loc}</td>`;
+    allTypes.forEach(t=>{ h+=`<td class="tr">${locByType[loc][t]||0}</td>`; });
+    h+=`<td class="tr" style="font-weight:600">${tot}</td><td class="tr">${pct}%</td></tr>`;
   });
-  h+=`</div></div>
-    <div class="panel"><div class="ph"><span class="ph-title">Tabela</span></div><div class="tw"><table>
-    <thead><tr><th>Location Type</th><th class="tr">Assets</th><th class="tr">%</th></tr></thead><tbody>`;
-  locS.forEach(([k,v])=>{
-    const pct=((v/locT)*100).toFixed(1);
-    h+=`<tr><td>${k}</td><td class="tr">${v}</td><td class="tr">${pct}%</td></tr>`;
+  // Totals row
+  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td>`;
+  allTypes.forEach(t=>{
+    const tot=locKeys.reduce((s,l)=>s+(locByType[l][t]||0),0);
+    h+=`<td class="tr">${tot}</td>`;
   });
-  h+=`</tbody></table></div></div></div></div><div class="div"></div>`;
+  h+=`<td class="tr">${locGrandTotal}</td><td class="tr">100%</td></tr>`;
+  h+=`</tbody></table></div></div></div><div class="div"></div>`;
 
   // ── 3. RETENTION ──
   const cov=termTotal?((withInfo.length/termTotal)*100).toFixed(0):0;
@@ -323,39 +371,35 @@ function renderRaw(){
     <div class="kpi b"><div class="kpi-lbl">Taxa de Cobertura</div><div class="kpi-val">${cov}%</div><div class="kpi-sub">terminados com info</div></div>
   </div></div><div class="div"></div>`;
 
-  // ── 4. TERM LIST ──
+  // ── 4. WAHA + TERMINATED LIST ──
   const tf=tlist.filter(r=>!ts||r.bms.toLowerCase().includes(ts)||r.name.toLowerCase().includes(ts)||r.assets.some(a=>a.toLowerCase().includes(ts)));
   const tpaged=tf.slice(tp*PG,tp*PG+PG);
   const tpages=Math.ceil(tf.length/PG);
-  h+=`<div class="sec"><div class="sec-lbl">4 · Lista WAH Terminated — BMS, Nome e Assets</div>
+  h+=`<div class="sec"><div class="sec-lbl">4 · Lista WAHA + WAH Terminated — BMS, Nome e Assets</div>
   <div class="panel">
-    <div class="toolbar"><span class="ph-title">WAH Terminated</span><span class="ph-cnt">${tf.length} pessoas</span>
+    <div class="toolbar">
+      <span class="ph-title">WAHA Terminated</span>
+      <span class="ph-cnt">${tf.length} pessoas · ${totalWahaAssets} assets</span>
       <input class="srch" placeholder="Filtrar BMS, nome ou asset..." value="${ts}" oninput="ts=this.value.toLowerCase();tp=0;renderRaw()">
     </div>
-    <div class="tw"><table><thead><tr><th>BMS</th><th>Nome</th><th>Assets Associados</th><th class="tr">Nº Assets</th></tr></thead><tbody>`;
+    <div class="tw"><table><thead><tr><th>BMS</th><th>Nome</th><th>Asset IDs</th><th class="tr">Nº Assets</th></tr></thead><tbody>`;
   tpaged.forEach(r=>{
-    const ab=r.assets.slice(0,6).map(a=>`<span class="badge bx">${a}</span>`).join('');
-    const ex=r.assets.length>6?`<span class="badge bb">+${r.assets.length-6}</span>`:'';
-    h+=`<tr><td><span class="badge bb">${r.bms}</span></td><td>${r.name}</td><td>${ab}${ex}</td><td class="tr">${r.assets.length}</td></tr>`;
+    const ab=r.assets.map(a=>`<span class="badge bx">${a}</span>`).join(' ');
+    h+=`<tr><td><span class="badge bb">${r.bms}</span></td><td>${r.name}</td><td style="max-width:500px;line-height:1.8">${ab||'—'}</td><td class="tr">${r.assets.length}</td></tr>`;
   });
   if(!tpaged.length)h+=`<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:1.5rem">Sem resultados</td></tr>`;
   h+=`</tbody></table></div>`;
-  if(tpages>1)h+=`<div class="pag"><span>${tp*PG+1}–${Math.min(tp*PG+PG,tf.length)} de ${tf.length}</span>
+  if(tpages>1)h+=`<div class="pag"><span>${tp*PG+1}–${Math.min(tp*PG+PG,tf.length)} de ${tf.length} pessoas</span>
     <button class="pb" onclick="tp--;renderRaw()" ${tp===0?'disabled':''}>← Ant</button>
     <button class="pb" onclick="tp++;renderRaw()" ${tp>=tpages-1?'disabled':''}>Seg →</button></div>`;
   h+=`</div></div><div class="div"></div>`;
 
-  // ── 5. DESC + LC ──
-  const df=dlist.filter(([k])=>!ds||k.toLowerCase().includes(ds));
-  const dpaged=df.slice(dp*PG,dp*PG+PG);
-  const dpages=Math.ceil(df.length/PG);
-  h+=`<div class="sec"><div class="sec-lbl">5 · Assets por Description e Life Cycle (&gt; 3 anos = vermelho)</div>
+  // ── 5. PC ASSETS × LIFE CYCLE ──
+  h+=`<div class="sec"><div class="sec-lbl">5 · PCs — Asset Type e Life Cycle (Thin Client, Portátil, MiniPC, Desktop)</div>
   <div class="panel">
-    <div class="toolbar"><span class="ph-title">Descrição de Assets</span><span class="ph-cnt">${df.length} tipos</span>
-      <input class="srch" placeholder="Filtrar descrição..." value="${ds}" oninput="ds=this.value.toLowerCase();dp=0;renderRaw()">
-    </div>
-    <div class="tw"><table><thead><tr><th>Description</th><th class="tr">Total</th><th class="tr">≤ 3 anos</th><th class="tr">&gt; 3 anos</th><th class="tr">Sem info</th><th style="min-width:140px">Distribuição</th></tr></thead><tbody>`;
-  dpaged.forEach(([k,v])=>{
+    <div class="ph"><span class="ph-title">Apenas assets de tipo PC</span><span class="ph-cnt">${pcData.length} assets</span></div>
+    <div class="tw"><table><thead><tr><th>Asset Type</th><th class="tr">Total</th><th class="tr">≤ 3 anos</th><th class="tr">&gt; 3 anos</th><th class="tr">Sem info</th><th style="min-width:140px">Distribuição</th></tr></thead><tbody>`;
+  dlist.forEach(([k,v])=>{
     const overP=v.total?Math.round(v.over3/v.total*100):0;
     const undrP=v.total?Math.round(v.under3/v.total*100):0;
     h+=`<tr>
@@ -370,12 +414,8 @@ function renderRaw(){
       </div></td>
     </tr>`;
   });
-  if(!dpaged.length)h+=`<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:1.5rem">Sem resultados</td></tr>`;
-  h+=`</tbody></table></div>`;
-  if(dpages>1)h+=`<div class="pag"><span>${dp*PG+1}–${Math.min(dp*PG+PG,df.length)} de ${df.length}</span>
-    <button class="pb" onclick="dp--;renderRaw()" ${dp===0?'disabled':''}>← Ant</button>
-    <button class="pb" onclick="dp++;renderRaw()" ${dp>=dpages-1?'disabled':''}>Seg →</button></div>`;
-  h+=`</div></div></div>`;
+  if(!dlist.length)h+=`<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:1.5rem">Sem assets de tipo PC encontrados. Verifica os valores na coluna Asset Type.</td></tr>`;
+  h+=`</tbody></table></div></div></div></div>`;
 
   document.getElementById('app').innerHTML=h;
 }
@@ -388,7 +428,20 @@ function renderKPI(){
 
   function pN(v){
     if(!v&&v!==0)return 0;
-    return parseFloat(String(v).replace(/[€\s]/g,'').replace(/\./g,'').replace(',','.'))||0;
+    const s=String(v).replace(/[€\s]/g,''); // remove € and all spaces first
+    // Now either "56306,26" (PT) or "56306.26" (EN) or "56,306.26" (EN with comma thousands)
+    // Detect: if comma exists and only 2 digits after last comma => decimal comma
+    const commaIdx=s.lastIndexOf(',');
+    const dotIdx=s.lastIndexOf('.');
+    let normalized;
+    if(commaIdx>dotIdx){
+      // comma is decimal separator: remove dots (thousands), replace comma with dot
+      normalized=s.replace(/\./g,'').replace(',','.');
+    } else {
+      // dot is decimal separator or no decimal at all: remove commas (thousands)
+      normalized=s.replace(/,/g,'');
+    }
+    return parseFloat(normalized)||0;
   }
   function fmtEur(v){return v.toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
   function fmtPct(v){
