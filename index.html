@@ -126,23 +126,46 @@ tr:hover td{background:var(--surface2)}
 </div>
 
 <script>
-const SID = '1SRTOqqHPJfo2YEVzNk960pfhZ5amGe6L';
+const CSV_RAW = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbcZJu3ucfLkikSK1JegMZlGtc9UeXxnHi016rltrWeIvzUADjuIDIanJfHkyVw/pub?gid=1912507012&single=true&output=csv';
+const CSV_KPI = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbcZJu3ucfLkikSK1JegMZlGtc9UeXxnHi016rltrWeIvzUADjuIDIanJfHkyVw/pub?gid=622591588&single=true&output=csv';
+
 let RAW=[], KPI=[];
 let ls='',lp=0, ts='',tp=0, ds='',dp=0;
 const PG=20;
 let CI=null;
 
-function gviz(sheet){
-  return new Promise((res,rej)=>{
-    const cb='_g'+Date.now()+Math.random().toString(36).slice(2);
-    const url=`https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheet)}&callback=${cb}`;
-    const s=document.createElement('script');
-    const t=setTimeout(()=>{cleanup();rej(new Error('Timeout: '+sheet));},12000);
-    function cleanup(){clearTimeout(t);delete window[cb];s.parentNode&&s.parentNode.removeChild(s);}
-    window[cb]=d=>{cleanup();res(d);};
-    s.onerror=()=>{cleanup();rej(new Error('Erro ao carregar: '+sheet));};
-    s.src=url;document.head.appendChild(s);
-  });
+async function fetchCSV(url){
+  const r=await fetch(url);
+  if(!r.ok) throw new Error('HTTP '+r.status+' ao carregar CSV');
+  return await r.text();
+}
+
+function parseCSV(text){
+  const rows=[];
+  const lines=text.split(/\r?\n/);
+  for(const line of lines){
+    if(!line.trim())continue;
+    const row=[];let i=0;
+    while(i<line.length){
+      if(line[i]==='"'){
+        i++;let cell='';
+        while(i<line.length){
+          if(line[i]==='"'&&line[i+1]==='"'){cell+='"';i+=2;}
+          else if(line[i]==='"'){i++;break;}
+          else{cell+=line[i++];}
+        }
+        row.push(cell.trim());
+        if(line[i]===',')i++;
+      }else{
+        let cell='';
+        while(i<line.length&&line[i]!==',')cell+=line[i++];
+        row.push(cell.trim());
+        if(line[i]===',')i++;
+      }
+    }
+    rows.push(row);
+  }
+  return rows;
 }
 
 function clean(v){
@@ -152,15 +175,8 @@ function clean(v){
   return s;
 }
 
-function parse(data){
-  if(!data?.table)return[];
-  const cols=data.table.cols||[];
-  const rows=data.table.rows||[];
-  const hdr=cols.map(c=>(c.label||c.id||'').trim());
-  return[hdr,...rows.map(r=>(r.c||[]).map(cell=>{
-    if(!cell||cell.v===null||cell.v===undefined)return'';
-    return clean(cell.f!==undefined&&cell.f!==null?cell.f:cell.v);
-  }))];
+function cleanRows(rows){
+  return rows.map(r=>r.map(clean));
 }
 
 function toObj(rows){
@@ -174,20 +190,22 @@ function fc(headers,...terms){
 }
 
 async function init(){
-  document.getElementById('app').innerHTML='<div class="state"><div class="spinner"></div><div class="st">A carregar dados</div><div class="ss">A ligar ao Google Sheets...</div></div>';
+  document.getElementById('app').innerHTML='<div class="state"><div class="spinner"></div><div class="st">A carregar dados</div><div class="ss">A ligar ao Google Sheets via CSV publicado...</div></div>';
   document.getElementById('tbar').style.display='none';
   document.getElementById('ldot').style.display='none';
   if(CI){try{CI.destroy();}catch(e){}CI=null;}
   try{
-    const[d1,d2]=await Promise.all([gviz('RAW DATA'),gviz('RECOVERS KPI')]);
-    RAW=parse(d1); KPI=parse(d2);
+    const[t1,t2]=await Promise.all([fetchCSV(CSV_RAW),fetchCSV(CSV_KPI)]);
+    RAW=cleanRows(parseCSV(t1));
+    KPI=cleanRows(parseCSV(t2));
+    if(RAW.length<2||KPI.length<2) throw new Error('Ficheiros CSV vazios ou sem dados.');
     document.getElementById('hsub').textContent=`Actualizado às ${new Date().toLocaleTimeString('pt-PT')}`;
     document.getElementById('ldot').style.display='block';
     document.getElementById('tbar').style.display='block';
     ls='';lp=0;ts='';tp=0;ds='';dp=0;
     showTab('raw');
   }catch(e){
-    document.getElementById('app').innerHTML=`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que o ficheiro está partilhado como <strong>"Qualquer pessoa com o link pode ver"</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
+    document.getElementById('app').innerHTML=`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que os ficheiros CSV estão publicados na web via <strong>Ficheiro → Publicar na Web → CSV</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
   }
 }
 
