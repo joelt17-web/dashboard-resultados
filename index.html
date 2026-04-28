@@ -199,10 +199,33 @@ async function init(){
     RAW=cleanRows(parseCSV(t1));
     KPI=cleanRows(parseCSV(t2));
     if(RAW.length<2||KPI.length<2) throw new Error('Ficheiros CSV vazios ou sem dados.');
-    document.getElementById('hsub').textContent=`Actualizado às ${new Date().toLocaleTimeString('pt-PT')}`;
+
+    // DEBUG: show raw values on page
+    const _rh=RAW[0];
+    const _atI=_rh.findIndex(h=>/asset.?type/i.test(h));
+    const _lcI=_rh.findIndex(h=>/life/i.test(h));
+    const _loI=_rh.findIndex(h=>/location.?ty/i.test(h));
+    const _hex=v=>[...v].map(c=>c.codePointAt(0).toString(16)).join(' ');
+    const _uAt=[...new Set(RAW.slice(1).map(r=>(r[_atI]||'').trim()))].sort();
+    const _uLc=[...new Set(RAW.slice(1).map(r=>(r[_lcI]||'').trim()))].filter(Boolean).sort();
+    const _uLo=[...new Set(RAW.slice(1).map(r=>(r[_loI]||'').trim()))].filter(Boolean).sort();
+    document.getElementById('app').innerHTML=`<div style="background:#111;color:#0f0;font-family:monospace;font-size:11px;padding:1rem;margin:1rem;border-radius:8px;white-space:pre-wrap;overflow:auto;max-height:80vh">
+<b>HEADERS [${_rh.length}]:</b> ${JSON.stringify(_rh)}
+
+<b>ASSET TYPE idx=${_atI} — ${_uAt.length} unique:</b>
+${_uAt.map(v=>`  [${_hex(v)}] "${v}"`).join('\n')}
+
+<b>LIFE CIC idx=${_lcI} — ${_uLc.length} unique:</b>
+${_uLc.map(v=>`  [${_hex(v)}] "${v}"`).join('\n')}
+
+<b>LOCATION TYPE idx=${_loI} — ${_uLo.length} unique:</b>
+${_uLo.map(v=>`  [${_hex(v)}] "${v}"`).join('\n')}
+</div><button class="btn-solid" style="margin:1rem" onclick="document.querySelector('[style*=background]').remove();showTab('raw')">Ver Dashboard</button>`;
+    document.getElementById('hsub').textContent='DEBUG MODE';
     document.getElementById('ldot').style.display='block';
     document.getElementById('tbar').style.display='block';
     ls='';lp=0;ts='';tp=0;ds='';dp=0;
+    return;
     showTab('raw');
   }catch(e){
     document.getElementById('app').innerHTML=`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que os ficheiros CSV estão publicados na web via <strong>Ficheiro → Publicar na Web → CSV</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
@@ -268,15 +291,41 @@ function renderRaw(){
   // Collect all unique valid Asset Types
   const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
 
-  // DEBUG: log unique raw ASSET TYPE values and LC values to console
+  // DEBUG: collect unique raw values
   const rawATypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()))].sort();
   const rawLC=[...new Set(data.map(r=>(r[LC]||'').trim()))].filter(Boolean).sort();
-  console.log('=== RAW ASSET TYPES ===', rawATypes);
-  console.log('=== RAW LC VALUES ===', rawLC);
-  console.log('=== VALID ASSET TYPES found ===', allTypes);
+  const rawLOC=[...new Set(data.map(r=>(r[LOC]||'').trim()))].filter(Boolean).sort();
   const rejected=rawATypes.filter(v=>v&&!isValidAssetType(v));
-  console.log('=== REJECTED ASSET TYPES ===', rejected);
-  console.log('=== REJECTED (hex) ===', rejected.map(v=>({v, hex:[...v].map(c=>c.codePointAt(0).toString(16)).join(' ')})));
+  const rejectedHex=rejected.map(v=>v+' ['+[...v].map(c=>c.codePointAt(0).toString(16).toUpperCase()).join(' ')+']');
+
+  // Show debug panel
+  document.getElementById('app').innerHTML=`<div class="fade" style="padding:1.5rem;font-family:DM Mono,monospace;font-size:12px;line-height:1.8">
+  <div style="background:#fff3cd;border:1px solid #f59e0b;border-radius:8px;padding:1rem;margin-bottom:1rem">
+    <strong>🔍 DEBUG MODE</strong> — copia este conteúdo e envia para corrigir os filtros. Depois remove o debug.
+  </div>
+  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
+    <strong>HEADERS encontrados:</strong><br>
+    ATYPE col: <b>${ATYPE}</b> | LOC col: <b>${LOC}</b> | LC col: <b>${LC}</b> | WAH col: <b>${WAH}</b>
+  </div>
+  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
+    <strong>RAW ASSET TYPES (${rawATypes.length} únicos):</strong><br>
+    ${rawATypes.map(v=>`<span style="color:${isValidAssetType(v)?'green':'red'}">${isValidAssetType(v)?'✓':'✗'} "${v}"</span>`).join('<br>')}
+  </div>
+  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
+    <strong>REJEITADOS com hex (${rejected.length}):</strong><br>
+    ${rejectedHex.map(v=>`<span style="color:red">${v}</span>`).join('<br>') || '<span style="color:green">Nenhum rejeitado!</span>'}
+  </div>
+  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
+    <strong>RAW LOCATION TYPES (${rawLOC.length} únicos):</strong><br>
+    ${rawLOC.map(v=>`<span style="color:${isValidLocType(v)?'green':'red'}">${isValidLocType(v)?'✓':'✗'} "${v}"</span>`).join('<br>')}
+  </div>
+  <div style="background:#f8f8f8;border:1px solid #ddd;border-radius:8px;padding:1rem;margin-bottom:1rem">
+    <strong>RAW LIFE CYCLE (${rawLC.length} únicos):</strong><br>
+    ${rawLC.map(v=>`"${v}" [${[...v].map(c=>c.codePointAt(0).toString(16).toUpperCase()).join(' ')}]`).join('<br>')}
+  </div>
+  <button class="btn-solid" onclick="renderRaw()" style="margin-top:1rem">← Voltar ao Dashboard</button>
+  </div>`;
+  return;
 
   // ── 1. WAH STATUS × ASSET TYPE (valid types only) ──
   const wahByType={};
