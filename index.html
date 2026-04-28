@@ -229,17 +229,33 @@ function renderRaw(){
   const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
   const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
 
-  // Invalid values to exclude
-  const INVALID_ATYPES=new Set(['i5','thin client','project - united parcel service','project - unicre – instituição financeira de crédito','project - unicre - instituição financeira de crédito','5cg9310dg6','0','']);
-  const INVALID_LOCS=new Set(['sem info','#error','mais de 3 anos','']);
-  function validAssetType(v){ return v&&!INVALID_ATYPES.has(v.toLowerCase().trim()); }
-  function validLocType(v){ return v&&!INVALID_LOCS.has(v.toLowerCase().trim()); }
+  // Invalid values to exclude — flexible matching
+  // Explicit blocklist
+  const BLOCK_ATYPES=['i5','i7','i3','thin client','5cg9310dg6','0'];
+  function isValidAssetType(v){
+    if(!v)return false;
+    const s=v.trim().toLowerCase();
+    if(BLOCK_ATYPES.includes(s))return false;
+    if(s.startsWith('project -'))return false;
+    if(/^\d+$/.test(s))return false; // pure numbers
+    if(s.length>=8&&!/\s/.test(s)&&/\d/.test(s)&&/[a-z]/i.test(s))return false; // alphanumeric codes like 5CG9310DG6
+    return s.length>0;
+  }
+  function isValidLocType(v){
+    if(!v)return false;
+    const s=v.trim().toLowerCase();
+    if(!s)return false;
+    if(s.includes('#'))return false;
+    if(s==='sem info'||s==='mais de 3 anos'||s==='menos de 3 anos'||s==='mais 3 anos'||s==='menos 3 anos')return false;
+    if(/^(sem|s\/|n\/a|na$|none|null|undefined)/.test(s))return false;
+    return true;
+  }
 
   // PC types filter for section 5
   const PC_TYPES=/^(thin.?client|portátil|portatil|minipc|mini.?pc|desktop)$/i;
 
   // Collect all unique valid Asset Types
-  const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(validAssetType))].sort();
+  const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
 
   // ── 1. WAH STATUS × ASSET TYPE (valid types only) ──
   const wahByType={};
@@ -247,7 +263,7 @@ function renderRaw(){
   data.forEach(r=>{
     const wah=(r[WAH]||'').trim(); if(!wah)return;
     const at=(r[ATYPE]||'').trim();
-    if(!validAssetType(at))return;
+    if(!isValidAssetType(at))return;
     if(!wahByType[wah])wahByType[wah]={};
     wahByType[wah][at]=(wahByType[wah][at]||0)+1;
     wahTotals[wah]=(wahTotals[wah]||0)+1;
@@ -262,7 +278,7 @@ function renderRaw(){
   data.forEach(r=>{
     const loc=(r[LOC]||'').trim();
     const at=(r[ATYPE]||'').trim();
-    if(!validLocType(loc)||!validAssetType(at))return;
+    if(!isValidLocType(loc)||!isValidAssetType(at))return;
     if(!locByType[loc])locByType[loc]={};
     locByType[loc][at]=(locByType[loc][at]||0)+1;
     locTotals[loc]=(locTotals[loc]||0)+1;
