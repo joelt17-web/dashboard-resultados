@@ -121,8 +121,7 @@ let CI=null;
 
 async function fetchCSV(url){
   const proxies=[u=>u,u=>'https://corsproxy.io/?'+encodeURIComponent(u),u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u)];
-  const urlWithTs = url + '&_t=' + Date.now();
-  for(const p of proxies){try{const r=await fetch(p(urlWithTs),{cache:'no-store'});if(r.ok){const t=await r.text();if(t.length>100&&t.includes(','))return t;}}catch(e){}}
+  for(const p of proxies){try{const r=await fetch(p(url),{cache:'no-store',headers:{'Cache-Control':'no-cache','Pragma':'no-cache'}});if(r.ok){const t=await r.text();if(t.length>100&&t.includes(','))return t;}}catch(e){}}
   throw new Error('Não foi possível carregar dados ao vivo.');
 }
 
