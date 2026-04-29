@@ -128,8 +128,6 @@ tr:hover td{background:var(--surface2)}
 <script>
 const CSV_RAW = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbcZJu3ucfLkikSK1JegMZlGtc9UeXxnHi016rltrWeIvzUADjuIDIanJfHkyVw/pub?gid=1912507012&single=true&output=csv';
 const CSV_KPI = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSUbcZJu3ucfLkikSK1JegMZlGtc9UeXxnHi016rltrWeIvzUADjuIDIanJfHkyVw/pub?gid=622591588&single=true&output=csv';
-// Pre-aggregated data embedded from Excel (updated manually)
-const SUMMARY = {"total_assets":90772,"updated_at":"2026-04-29T13:56:24.527Z","wah_by_type":{"Active":{"Monitor":9339,"Desktop":162,"Diversos":2,"Portátil":2874,"MiniPC":4437,"Tablets":46,"Thin Client":288,"Docks":414,"Outros":405,"Posto de Trabalho":1,"Secretária":9,"Routers":95,"Cadeira":397,"Mesa de cafeteria":2},"Terminated":{"Monitor":809,"Desktop":24,"Diversos":1,"Portátil":85,"MiniPC":276,"Tablets":3,"Thin Client":26,"Docks":25,"Outros":67,"Secretária":3,"Cadeira":46},"Leave of Absence":{"Monitor":569,"Desktop":7,"Portátil":91,"MiniPC":278,"Tablets":1,"Thin Client":19,"Docks":24,"Secretária":1,"Cadeira":30,"Routers":1,"Outros":17},"Candidate":{"Monitor":194,"Portátil":13,"MiniPC":121}},"loc_by_type":{"WAHA":{"Monitor":11468,"Desktop":218,"Diversos":3,"Portátil":3083,"MiniPC":5277,"Tablets":51,"Thin Client":346,"Docks":466,"Outros":492,"Posto de Trabalho":1,"Secretária":13,"Routers":96,"Cadeira":477,"Mesa de cafeteria":2},"EDIFICIOS":{"Monitor":13121,"Desktop":417,"Diversos":39,"Portátil":1164,"MiniPC":7580,"Tablets":104,"Thin Client":820,"Docks":572,"Outros":92,"TV's (Wallboard)":398,"Armário":992,"Banco Corrido":86,"Bloco Gavetas":81,"Mesa de cafeteria":806,"Mesa":778,"Mobiliário":552,"Móvel Standard":36,"Posto de Trabalho":1035,"Secretária":3194,"Routers":68,"Cadeira":9858,"Cadeira de cafeteria":1093},"AVT":{"Monitor":601,"Desktop":3,"Diversos":92,"Portátil":210,"MiniPC":457,"Tablets":21,"Docks":121,"Outros":75,"TV's (Wallboard)":38,"Routers":121,"Banco Corrido":117,"Cadeira":64,"Mesa":92,"Armário":16,"Mesa de cafeteria":41},"WAREHOUSE":{"Monitor":795,"Diversos":20,"Portátil":154,"MiniPC":53,"Thin Client":59,"Docks":240,"Outros":85,"TV's (Wallboard)":1,"Armário":7,"Secretária":3,"Cadeira":2,"Mesa":1,"Desktop":6},"ARMAZÉM":{"Monitor":25,"Diversos":46,"Portátil":69,"MiniPC":1,"Docks":1,"Outros":13,"TV's (Wallboard)":5,"Armário":111,"Bloco Gavetas":13,"Mesa":141,"Mobiliário":154,"Posto de Trabalho":438,"Secretária":684,"Routers":2,"Cadeira":290,"Mesa de cafeteria":86,"Cadeira de cafeteria":6},"STAGING":{"Monitor":76,"Desktop":7,"Diversos":1,"Portátil":240,"MiniPC":841,"Tablets":1,"Thin Client":323,"Docks":2,"Bloco Gavetas":2,"Secretária":4,"Routers":2,"Cadeira":4,"Mesa de cafeteria":2,"Outros":2},"APARTAMENTOS":{"Diversos":1,"Outros":17,"Armário":2,"Bloco Gavetas":1,"Mesa":1,"Mobiliário":20,"Posto de Trabalho":17,"Secretária":59,"Routers":2868,"Cadeira":3972,"Monitor":2,"Mesa de cafeteria":68,"Cadeira de cafeteria":711}},"all_atypes":["Cadeira","Desktop","Diversos","Docks","Mesa de cafeteria","MiniPC","Monitor","Outros","Portátil","Posto de Trabalho","Routers","Secretária","Tablets","Thin Client"],"all_locs":["APARTAMENTOS","ARMAZÉM","AVT","EDIFICIOS","STAGING","WAHA","WAREHOUSE"],"term_with_retention":186,"term_without_retention":1179,"pc_lc":{"WAHA":{"Desktop":{"over3":216,"under3":0,"unk":2},"Portátil":{"over3":1912,"under3":363,"unk":808},"MiniPC":{"over3":4416,"under3":249,"unk":612},"Thin Client":{"over3":335,"under3":0,"unk":11}},"EDIFICIOS":{"Desktop":{"over3":405,"under3":3,"unk":9},"Portátil":{"over3":792,"under3":75,"unk":297},"MiniPC":{"over3":5316,"under3":357,"unk":1907},"Thin Client":{"over3":758,"under3":0,"unk":62}},"STAGING":{"Desktop":{"over3":5,"under3":0,"unk":2},"Portátil":{"over3":143,"under3":10,"unk":87},"MiniPC":{"over3":472,"under3":41,"unk":328},"Thin Client":{"over3":307,"under3":0,"unk":16}},"AVT":{"Desktop":{"over3":0,"under3":0,"unk":3},"Portátil":{"over3":110,"under3":6,"unk":94},"MiniPC":{"over3":323,"under3":21,"unk":113}},"WAREHOUSE":{"Portátil":{"over3":113,"under3":16,"unk":25},"MiniPC":{"over3":34,"under3":6,"unk":13},"Thin Client":{"over3":58,"under3":0,"unk":1},"Desktop":{"over3":0,"under3":6,"unk":0}},"ARMAZÉM":{"Portátil":{"over3":40,"under3":0,"unk":29},"MiniPC":{"over3":0,"under3":0,"unk":1}}},"waha_terminated":[{"bms":"5292863","name":"André Gomes","assets":["CNK02816H2"]},{"bms":"5485417","name":"Jorge Miguel Santos","assets":["CNK944226X"]},{"bms":"3727722","name":"Marcela Costa","assets":[]},{"bms":"5525834","name":"Kilyan Karramkan","assets":[]},{"bms":"1301696","name":"Luis Felix","assets":[]},{"bms":"6074984","name":"Stanley Antoine","assets":[]},{"bms":"5085988","name":"André Chen","assets":["J1LMTF174859"]},{"bms":"5248699","name":"","assets":[]},{"bms":"5602072","name":"","assets":["J1LMTF175247","F8LMTF146229"]},{"bms":"763153","name":"","assets":["CN00G2TG6418064M174TA00","5CG9302V02","5cg1378df0","5CG227W82T","5CG227W874"]},{"bms":"5713220","name":"","assets":["G8LMTF137042"]},{"bms":"3535973","name":"","assets":[]},{"bms":"4117353","name":"","assets":["8CC9472V8C"]},{"bms":"3494639","name":"","assets":["8CC01106CD","8CC0310TP4"]},{"bms":"3845128","name":"","assets":[]},{"bms":"5061785","name":"","assets":["8cc1111kvl"]},{"bms":"4332601","name":"","assets":[]},{"bms":"4522208","name":"","assets":["8CG831245H"]},{"bms":"3718901","name":"","assets":["8cc0490vmt"]},{"bms":"4060147","name":"","assets":["8cc9353vr9","8CC01031QC"]},{"bms":"3771869","name":"","assets":["5CD148254Q"]},{"bms":"6186756","name":"","assets":["8CC91733VW"]},{"bms":"6060396","name":"","assets":[]},{"bms":"5648231","name":"","assets":[]},{"bms":"4470388","name":"","assets":["8CC1010QYT"]},{"bms":"5644706","name":"","assets":["E8LMQS133988"]},{"bms":"5692248","name":"","assets":["8CC22300PC"]},{"bms":"3848380","name":"","assets":[]},{"bms":"4572961","name":"","assets":["8CC011088B"]},{"bms":"4916405","name":"","assets":["GALMTF131765"]},{"bms":"4971577","name":"","assets":["8CC0491YVH"]},{"bms":"2669264","name":"","assets":[]},{"bms":"4327057","name":"","assets":[]},{"bms":"4964257","name":"","assets":["dalmqs069331","5CG2173PL3"]},{"bms":"5252454","name":"","assets":[]},{"bms":"5103274","name":"","assets":["CBLMQS080930","8CC8383CQD"]},{"bms":"5686903","name":"","assets":["H3LMTF052390","8CC014BTQ"]},{"bms":"5692131","name":"","assets":["6CM8241TH9"]},{"bms":"5958884","name":"","assets":["8CC04217NG"]},{"bms":"4439454","name":"","assets":["8CC1162JRX"]},{"bms":"4516070","name":"","assets":["E8LMQS133666"]},{"bms":"5895514","name":"","assets":["GALMTF131215","8CG831240W"]},{"bms":"5546001","name":"","assets":[]},{"bms":"3474345","name":"","assets":[]},{"bms":"5862453","name":"","assets":["F8LMQS022978","8CC0310HSB"]},{"bms":"4316339","name":"","assets":[]},{"bms":"4713890","name":"","assets":[]},{"bms":"5394553","name":"","assets":[]},{"bms":"4189631","name":"","assets":["8CC2200JRX"]},{"bms":"5127643","name":"","assets":[]},{"bms":"3925853","name":"","assets":[]},{"bms":"3443713","name":"","assets":[]},{"bms":"3774009","name":"","assets":["8CC0491Z95"]},{"bms":"5194879","name":"","assets":[]},{"bms":"4877830","name":"","assets":["HCLMTF007313","F8LMTF145502"]},{"bms":"4380445","name":"","assets":[]},{"bms":"5166500","name":"","assets":["CZC0248V1M"]},{"bms":"5085988","name":"","assets":[]},{"bms":"5084397","name":"","assets":["8CC0104BT5"]},{"bms":"2198485","name":"","assets":["J1LMTF105178","GBLMTF040908","8CC1411KS5"]},{"bms":"5497296","name":"","assets":["8cc83219kk","8cc90841wr"]},{"bms":"5203108","name":"","assets":[]},{"bms":"4720956","name":"","assets":[]},{"bms":"3891564","name":"","assets":["8CC01106CM"]},{"bms":"3573120","name":"","assets":[]},{"bms":"3161024","name":"","assets":[]},{"bms":"3399417","name":"","assets":["3cm1510d0f","5CG8246T0M","8CC0450CYD"]},{"bms":"5553225","name":"","assets":[]},{"bms":"5867106","name":"","assets":[]},{"bms":"4135864","name":"","assets":[]},{"bms":"4480064","name":"","assets":["FCLMTF013272"]},{"bms":"5194847","name":"","assets":[]},{"bms":"4995896","name":"","assets":[]},{"bms":"5930146","name":"","assets":[]},{"bms":"4684921","name":"","assets":["8cc91733w4","8cc90803xd"]},{"bms":"5748988","name":"","assets":["G8LMTF185507","8CC9492XQS"]},{"bms":"4283363","name":"","assets":["8CC0023N1F"]},{"bms":"3726018","name":"","assets":[]},{"bms":"6049364","name":"","assets":["GALMTF130952"]},{"bms":"6082716","name":"","assets":[]},{"bms":"5892126","name":"","assets":["8CC90841XK"]},{"bms":"4573211","name":"","assets":["CNK9490VL2","8CC92805WX","8CC92117GK"]},{"bms":"3525142","name":"","assets":["8CC1010HC4"]},{"bms":"3418626","name":"","assets":["8CC9272VNK","CZC0197DP5"]},{"bms":"5355598","name":"","assets":[]},{"bms":"5748899","name":"","assets":["8CC0450CWX"]},{"bms":"2754606","name":"","assets":["8CC92117C9","8CG831242D","8cc04217mr"]},{"bms":"4637974","name":"","assets":["8CC22300KL"]},{"bms":"4402614","name":"","assets":[]},{"bms":"5184736","name":"","assets":["8CC90803XS"]},{"bms":"4480033","name":"","assets":["HALMTF012339"]},{"bms":"5160335","name":"","assets":["8cc91733tp"]},{"bms":"5256066","name":"","assets":["8CC22300LK"]},{"bms":"4145004","name":"","assets":["E8LMQS123613","8CC0450D4H"]},{"bms":"5601230","name":"","assets":["GBLMTF040861"]},{"bms":"4945698","name":"","assets":["CN029C29742613CK1LMB"]},{"bms":"5528339","name":"","assets":["CN02XT76FCC0097OCLCBA05","8CC1111L67"]},{"bms":"5294793","name":"","assets":["D8LMQS012672","F8LMQS114373"]},{"bms":"5875416","name":"","assets":[]},{"bms":"6181388","name":"","assets":["FCLMTF012698","8CC2231X2F"]},{"bms":"5983195","name":"","assets":["GBLMTF039980","8CC01420BJ"]},{"bms":"1271290","name":"","assets":["8CC04217N2","5CG3041Z9N"]},{"bms":"4256082","name":"","assets":[]},{"bms":"3748838","name":"","assets":[]},{"bms":"4880067","name":"","assets":[]},{"bms":"4064141","name":"","assets":[]},{"bms":"2287083","name":"","assets":[]},{"bms":"5787160","name":"","assets":["CN03H8K9BO3000730Z1UA05","8CC9304NK9"]},{"bms":"3718922","name":"","assets":[]},{"bms":"4899222","name":"","assets":["8CC91733TX"]},{"bms":"6224430","name":"","assets":["8CG0094Z1Q"]},{"bms":"5903400","name":"","assets":[]},{"bms":"2915104","name":"","assets":["czc00180wh"]},{"bms":"4571855","name":"","assets":[]},{"bms":"5475460","name":"","assets":[]},{"bms":"5741853","name":"","assets":[]},{"bms":"5322676","name":"","assets":["8cc1010hbh"]},{"bms":"4780618","name":"","assets":["5CD138GQTW"]},{"bms":"5869779","name":"","assets":["J7LMTF051562","8CC1162JML"]},{"bms":"3954613","name":"","assets":["#N/A"]},{"bms":"5726643","name":"","assets":["CZC0169DFC","CZC0248V3K"]},{"bms":"5097010","name":"","assets":["8CC1162JNH"]},{"bms":"4864754","name":"","assets":["8CC04217NL"]},{"bms":"5723832","name":"","assets":["C7LMQS128258"]},{"bms":"4454754","name":"","assets":[]},{"bms":"4412032","name":"","assets":["8cc9230bhv"]},{"bms":"2969338","name":"","assets":["8CC0491Z4R"]},{"bms":"5717051","name":"","assets":["CNK907277T","CNK84307BP"]},{"bms":"4995527","name":"","assets":["8CC2200JRV"]},{"bms":"3902986","name":"","assets":[]},{"bms":"6097947","name":"","assets":["8CC0310THP"]},{"bms":"4710916","name":"","assets":["8CC1515GCV"]},{"bms":"5839255","name":"","assets":["8CC9472VCH"]},{"bms":"1204898","name":"","assets":["8CC9272VQ6"]},{"bms":"4365950","name":"","assets":[]},{"bms":"4763458","name":"","assets":[]},{"bms":"5305147","name":"","assets":[]},{"bms":"3087618","name":"","assets":[]},{"bms":"4844864","name":"","assets":[]},{"bms":"5283727","name":"","assets":[]},{"bms":"4126050","name":"","assets":[]},{"bms":"5638111","name":"","assets":[]},{"bms":"5394616","name":"","assets":[]},{"bms":"3866802","name":"","assets":[]},{"bms":"1380848","name":"","assets":["8cc92117bb"]},{"bms":"4294372","name":"","assets":["8CC9151NJ7"]},{"bms":"5321920","name":"","assets":["8cc92205w3"]},{"bms":"5333303","name":"","assets":[]},{"bms":"6095225","name":"","assets":[]},{"bms":"3431493","name":"","assets":["6LD65M3"]},{"bms":"6000735","name":"","assets":[]},{"bms":"3038766","name":"","assets":[]},{"bms":"5756417","name":"","assets":["8CC9472VCY"]},{"bms":"5284962","name":"","assets":["GALMTF131746","8CC1111KVK"]},{"bms":"4933869","name":"","assets":[]},{"bms":"5456162","name":"","assets":["8CC2200JS0"]},{"bms":"4998489","name":"","assets":["8CC0522L1Z"]},{"bms":"3855861","name":"","assets":["8cc0420xdc"]},{"bms":"486281","name":"","assets":[]},{"bms":"2319311","name":"","assets":[]},{"bms":"5174543","name":"","assets":["E8LMQS133677","8cc0135dhd"]},{"bms":"6215050","name":"","assets":[]},{"bms":"5668973","name":"","assets":["8CC0310TNC"]},{"bms":"5243659","name":"","assets":["G7LMTF074878","8CC9472VBP"]},{"bms":"4435399","name":"","assets":["8cc9472v8b","8CC90232WL"]},{"bms":"5560393","name":"","assets":[]},{"bms":"5990798","name":"","assets":["J1LMTF105467","8CC2200JBM"]},{"bms":"5692651","name":"","assets":["8CC90803V3"]},{"bms":"5043485","name":"","assets":["8CC0135DFT"]},{"bms":"5742084","name":"","assets":["H9LMTF048521"]},{"bms":"5166866","name":"","assets":["E9LMQS076767","8CC0371TCR"]},{"bms":"2769849","name":"","assets":[]},{"bms":"6072111","name":"","assets":["8CC1111L02","N3LMTF317899"]},{"bms":"4711154","name":"","assets":["8cc0371tb5"]},{"bms":"4861623","name":"","assets":["8cc0104br2"]},{"bms":"5300376","name":"","assets":[]},{"bms":"5321821","name":"","assets":["CN0DMKF46418019L00TS","8CC20721QR"]},{"bms":"6302948","name":"","assets":["F8LMTF145058"]},{"bms":"5757678","name":"","assets":["CNK84200YD"]},{"bms":"5506565","name":"","assets":["8cc8420wxp"]},{"bms":"5876221","name":"","assets":["8CC011087H"]},{"bms":"1967211","name":"","assets":[]},{"bms":"5894715","name":"","assets":["F8LMTF145825"]},{"bms":"3869931","name":"","assets":[]},{"bms":"3691697","name":"","assets":[]},{"bms":"5711643","name":"","assets":["8CC83219N6"]},{"bms":"3212421","name":"","assets":["CNK907277L","8CC9151Z8K"]},{"bms":"5263262","name":"","assets":[]},{"bms":"5476496","name":"","assets":["FCLMTF012740"]},{"bms":"5338160","name":"","assets":["CN029C29742613CI17YB","8CN23403DQ"]},{"bms":"5715855","name":"","assets":["HBLMTF053781"]},{"bms":"4159393","name":"","assets":[]},{"bms":"5184376","name":"","assets":[]},{"bms":"3836873","name":"","assets":["8cc90841xg"]},{"bms":"5220695","name":"","assets":["JBLMTF113014","J7LMTF051408"]},{"bms":"3040886","name":"","assets":["F8LMTF144820","8CC0110844"]},{"bms":"5388166","name":"","assets":["F8LMTF145398"]},{"bms":"2764337","name":"","assets":["8CC0491ZB6"]},{"bms":"6115956","name":"","assets":["H3LMTF053167"]},{"bms":"5131538","name":"","assets":["CNK9070BWB"]},{"bms":"5508520","name":"","assets":["8CC2200K4C"]},{"bms":"742349","name":"","assets":[]},{"bms":"5930052","name":"","assets":["8CC9272VNT","8CC0135DG2"]},{"bms":"486183","name":"","assets":[]},{"bms":"3562910","name":"","assets":["GALMTF130659","H3LMTF052765","8CC9440ZGR"]},{"bms":"5145339","name":"","assets":["H3LMTF052991"]},{"bms":"5547620","name":"","assets":["H3LMTF052413","G7LMTF073905"]},{"bms":"5085378","name":"","assets":["F8LMQS022813","F8LMQS114332"]},{"bms":"2039599","name":"","assets":[]},{"bms":"5231218","name":"","assets":["H3LMTF053567","CZC0049XCT"]},{"bms":"5184108","name":"","assets":["CN029C29742613A730ML","CN029C297426137F1JFL","8CC9472VHK"]},{"bms":"5486336","name":"","assets":["M9NXCV14F95738G","8CC0490VM1"]},{"bms":"832785","name":"","assets":[]},{"bms":"5481032","name":"","assets":["F8LMQS023090"]},{"bms":"3926048","name":"","assets":["8CC0310TMB"]},{"bms":"4524612","name":"","assets":[]},{"bms":"5255231","name":"","assets":["GBLMTF040885"]},{"bms":"5525834","name":"","assets":[]},{"bms":"3330542","name":"","assets":["CNK949092B"]},{"bms":"5685140","name":"","assets":["F8LMTF144738","F8LMTF145348","8CC01420FH"]},{"bms":"6161195","name":"","assets":["8CC921179J"]},{"bms":"4308212","name":"","assets":["8CC0450CXQ"]},{"bms":"5064584","name":"","assets":["G8LMTF185033"]},{"bms":"5568566","name":"","assets":[]},{"bms":"5328370","name":"","assets":["GBLMTF039688","8CC03523P8"]},{"bms":"1423723","name":"","assets":["H3LMTF053115"]},{"bms":"3713759","name":"","assets":[]},{"bms":"3898383","name":"","assets":["8CC10212NN"]},{"bms":"2926159","name":"","assets":[]},{"bms":"5759395","name":"","assets":["CNK8080ZRJ","CNK90920PQ","8CC1411KVQ"]},{"bms":"3727758","name":"","assets":["CN494309KD"]},{"bms":"4467618","name":"","assets":["CN03H8K9BO30007316GUA05"]},{"bms":"3469909","name":"","assets":[]},{"bms":"5063367","name":"","assets":["6CM60811J6","8CC0420XD1"]},{"bms":"4707819","name":"","assets":[]},{"bms":"485891","name":"","assets":[]},{"bms":"3945646","name":"","assets":["FALMTF060196","5CD423GTQF"]},{"bms":"4309741","name":"","assets":[]},{"bms":"4820945","name":"","assets":["CCLMQS089638"]},{"bms":"4318637","name":"","assets":[]},{"bms":"6046825","name":"","assets":["J7LMTF051040","H6LMTF007780","8CC0420XH6"]},{"bms":"5487974","name":"","assets":[]},{"bms":"5166317","name":"","assets":["8CC83219JN"]},{"bms":"5019559","name":"","assets":["8CC9472VFJ"]},{"bms":"4437569","name":"","assets":[]},{"bms":"4323531","name":"","assets":["CZC939FNBG"]},{"bms":"5860614","name":"","assets":["gblmtf040248","8CC9492XPV"]},{"bms":"833088","name":"","assets":[]},{"bms":"3593813","name":"","assets":["8CC0310HSC"]},{"bms":"6088074","name":"","assets":["CN02XT76FCC0094ADV5UA05","CN02XT76FCC00934A5LUA05"]},{"bms":"5161465","name":"","assets":["K7LMQS005357"]},{"bms":"4435949","name":"","assets":[]},{"bms":"5835448","name":"","assets":[]},{"bms":"6086517","name":"","assets":[]},{"bms":"2599033","name":"","assets":["8CC90841TN"]},{"bms":"4363500","name":"","assets":[]},{"bms":"6168171","name":"","assets":["8CC92205S1"]},{"bms":"4756000","name":"","assets":["8CC0450DFS"]},{"bms":"3362345","name":"","assets":[]},{"bms":"5162359","name":"","assets":["8CG7244JDV"]},{"bms":"4368901","name":"","assets":[]},{"bms":"2177725","name":"","assets":["8CG831244G"]},{"bms":"5301514","name":"","assets":["CN03H8K9BO30007P194UA05","CN03H8K9BO300073105UA05"]},{"bms":"4610701","name":"","assets":["8cc90803zf"]},{"bms":"5257960","name":"","assets":["8CC0450D6S"]},{"bms":"5874744","name":"","assets":["CN029C297426158C5P6S","8cc9272vn9"]},{"bms":"4457447","name":"","assets":["CN02XT76FCC0094AAPAUA05","8CC91449PZ"]},{"bms":"5025058","name":"","assets":[]},{"bms":"5836321","name":"","assets":["CN00G2TG6418064M0CXTA00","8CC83219LR"]},{"bms":"3416934","name":"","assets":[]},{"bms":"5807196","name":"","assets":["CN029C29742613CI185B","8CC0441XZN"]},{"bms":"5646564","name":"","assets":["G8LMTF185923"]},{"bms":"5213470","name":"","assets":["CCLMQS090120","CALMQS057377"]},{"bms":"4898708","name":"","assets":[]},{"bms":"5172726","name":"","assets":[]},{"bms":"4267879","name":"","assets":["8CC2200JWL","5CD5109VW4"]},{"bms":"5488421","name":"","assets":["8CC1111KZK"]},{"bms":"5722128","name":"","assets":["8CC2140CF7"]},{"bms":"4833245","name":"","assets":["8cc1111ksx"]},{"bms":"5692215","name":"","assets":[]},{"bms":"4327411","name":"","assets":["8CC1111KXJ","8CC2231X0Y"]},{"bms":"3916211","name":"","assets":[]},{"bms":"4837288","name":"","assets":[]},{"bms":"4412805","name":"","assets":[]},{"bms":"4450155","name":"","assets":[]},{"bms":"4869008","name":"","assets":["8CC011089F"]},{"bms":"3092432","name":"","assets":["8CG8312436"]},{"bms":"5099778","name":"","assets":["D9LMQS011818","#N/A"]},{"bms":"5176874","name":"","assets":[]},{"bms":"5106390","name":"","assets":[]},{"bms":"4747242","name":"","assets":["8CC011085N"]},{"bms":"4647967","name":"","assets":["8CC2200JDB"]},{"bms":"4550852","name":"","assets":["5CD103FZH2"]},{"bms":"5114523","name":"","assets":["8cc0491z4z"]},{"bms":"5561674","name":"","assets":[]},{"bms":"4014470","name":"","assets":["3CM2274RDY","8CN2340378"]},{"bms":"5503300","name":"","assets":[]},{"bms":"5556047","name":"","assets":[]},{"bms":"5148312","name":"","assets":[]},{"bms":"2833950","name":"","assets":["5CG227WXT6"]},{"bms":"3241559","name":"","assets":[]},{"bms":"2701777","name":"","assets":["8CC2200JF4"]},{"bms":"3683846","name":"","assets":[]},{"bms":"3472015","name":"","assets":["8CC83219LP","8CC9472V9M"]},{"bms":"5568192","name":"","assets":[]},{"bms":"4508988","name":"","assets":["5CD5109VW5"]},{"bms":"4731468","name":"","assets":["8CC83219HT"]},{"bms":"4897708","name":"","assets":[]},{"bms":"1071559","name":"","assets":["8cc0491z09"]},{"bms":"5493749","name":"","assets":["8CC90232ZT"]},{"bms":"5315377","name":"","assets":[]},{"bms":"5891110","name":"","assets":["CNK8371YWY","8CC01106FC"]},{"bms":"3038746","name":"","assets":[]},{"bms":"5222587","name":"","assets":[]},{"bms":"5521039","name":"","assets":[]},{"bms":"3668561","name":"","assets":[]},{"bms":"4503720","name":"","assets":[]},{"bms":"3113085","name":"","assets":[]},{"bms":"4903433","name":"","assets":["CNK8391C6G"]},{"bms":"4501753","name":"","assets":["8cc9151z8y"]},{"bms":"5090487","name":"","assets":[]},{"bms":"4428615","name":"","assets":["8CC0110867"]},{"bms":"3820948","name":"","assets":["5CG0391VPX"]},{"bms":"5102330","name":"","assets":[]},{"bms":"5649949","name":"","assets":[]},{"bms":"4240620","name":"","assets":["5CD2102DDC","5CG217ZKVT"]},{"bms":"2684821","name":"","assets":[]},{"bms":"5260692","name":"","assets":[]},{"bms":"3266843","name":"","assets":[]},{"bms":"5604671","name":"","assets":[]},{"bms":"3677717","name":"","assets":["5CD229CX2M","5CG225Z79J"]},{"bms":"3947385","name":"","assets":["5CG13934JJ","5CG125XQNL"]},{"bms":"5508506","name":"","assets":[]},{"bms":"5167787","name":"","assets":["8CC01106BY"]},{"bms":"5271018","name":"","assets":["8CC9520XQW"]},{"bms":"6100986","name":"","assets":["8CC04217NM"]},{"bms":"4719470","name":"","assets":[]},{"bms":"5665933","name":"","assets":[]},{"bms":"4728304","name":"","assets":["8cc1010h98"]},{"bms":"5205780","name":"","assets":["8CC0104BV3"]},{"bms":"5123843","name":"","assets":[]},{"bms":"5749111","name":"","assets":[]},{"bms":"5876207","name":"","assets":[]},{"bms":"5570799","name":"","assets":["8CC04217M4"]},{"bms":"4691952","name":"","assets":["5CG1378DDV","5CG227X9GC"]},{"bms":"4672918","name":"","assets":["5CD2073HMW","5CG130XLTX"]},{"bms":"1423741","name":"","assets":[]},{"bms":"2068425","name":"","assets":["6CM92914HC"]},{"bms":"5118455","name":"","assets":["DALMQS083122"]},{"bms":"4854228","name":"","assets":["8CN23403GX"]},{"bms":"5121298","name":"","assets":["J1LMTF105422","J3LMTF047753"]},{"bms":"2230391","name":"","assets":[]},{"bms":"5753434","name":"","assets":[]},{"bms":"5249952","name":"","assets":[]},{"bms":"5617081","name":"","assets":[]},{"bms":"4253553","name":"","assets":["8cc9472vd9"]},{"bms":"4622779","name":"","assets":["5CG0270WJ5","5CG132ZXKT"]},{"bms":"3971003","name":"","assets":[]},{"bms":"6021744","name":"","assets":["J1LMTF105035","8CN234034C"]},{"bms":"3762010","name":"","assets":["J1LMTF174920"]},{"bms":"5175100","name":"","assets":[]},{"bms":"5049408","name":"","assets":["8CG0094Z7D"]},{"bms":"3727722","name":"","assets":["8cc8521qg2"]},{"bms":"3119492","name":"","assets":["8CC0450CWP"]},{"bms":"3170563","name":"","assets":["8CC1162JMV"]},{"bms":"5701663","name":"","assets":["J3LMTF047403","J3LMTF047653"]},{"bms":"4976098","name":"","assets":["CNK90201Q1"]},{"bms":"5887022","name":"","assets":[]},{"bms":"5237092","name":"","assets":["H3LMTF052686","8CC03523QJ"]},{"bms":"5774819","name":"","assets":["CNK8510QD6"]},{"bms":"5316341","name":"","assets":["HALMTF012351"]},{"bms":"5682922","name":"","assets":["8CC0023N15"]},{"bms":"6038236","name":"","assets":["MMT1LEE001429092C44200"]},{"bms":"5449733","name":"","assets":[]},{"bms":"5728391","name":"","assets":[]},{"bms":"3957911","name":"","assets":[]},{"bms":"4160116","name":"","assets":["5CG8396415"]},{"bms":"3893260","name":"","assets":[]},{"bms":"3494674","name":"","assets":["5CG125161J","5CG129WJFZ"]},{"bms":"5079006","name":"","assets":[]},{"bms":"5308171","name":"","assets":["8cc0491yv9"]},{"bms":"4454738","name":"","assets":["8CC92205TQ"]},{"bms":"1168354","name":"","assets":[]},{"bms":"5361042","name":"","assets":[]},{"bms":"3925446","name":"","assets":[]},{"bms":"1463452","name":"","assets":["5CG0305Z7Q"]},{"bms":"1029776","name":"","assets":[]},{"bms":"5185736","name":"","assets":[]},{"bms":"3102863","name":"","assets":[]},{"bms":"6155911","name":"","assets":[]},{"bms":"3637641","name":"","assets":["5CG0131HNW","8CC0441Y06"]},{"bms":"3907067","name":"","assets":["5CD229CWZ1","5CG230WL54"]},{"bms":"3711282","name":"","assets":["5CG0139D6M"]},{"bms":"4442002","name":"","assets":[]},{"bms":"4811984","name":"","assets":[]},{"bms":"4709928","name":"","assets":["5CG0139D7X"]},{"bms":"6044960","name":"","assets":[]},{"bms":"3204885","name":"","assets":[]},{"bms":"5666737","name":"","assets":[]},{"bms":"4707521","name":"","assets":["8CC1162H86"]},{"bms":"829610","name":"","assets":["5CD229CX44"]},{"bms":"1939424","name":"","assets":[]},{"bms":"5653255","name":"","assets":[]},{"bms":"4269123","name":"","assets":["CZC63175YJ"]},{"bms":"4199765","name":"","assets":["8CG0094Z6Z"]},{"bms":"4233205","name":"","assets":[]},{"bms":"5800384","name":"","assets":[]},{"bms":"5344097","name":"","assets":[]},{"bms":"3453902","name":"","assets":["8CC0491Z7V"]},{"bms":"4472675","name":"","assets":[]},{"bms":"4636702","name":"","assets":[]},{"bms":"4075742","name":"","assets":[]},{"bms":"5819326","name":"","assets":[]},{"bms":"4035099","name":"","assets":[]},{"bms":"5832057","name":"","assets":["8cc1111kvc"]},{"bms":"4747906","name":"","assets":[]},{"bms":"3644135","name":"","assets":["5CD229CX6V","5CG224XPQX"]},{"bms":"3825152","name":"","assets":["8CC0135DDQ"]},{"bms":"2620645","name":"","assets":[]},{"bms":"4707996","name":"","assets":[]},{"bms":"3173303","name":"","assets":["8CC84006PK"]},{"bms":"4673321","name":"","assets":["8cc9472vfn"]},{"bms":"4404423","name":"","assets":["8CC1162JN0"]},{"bms":"4772048","name":"","assets":[]},{"bms":"5070572","name":"","assets":["NXA6XEK0021512BD707600"]},{"bms":"5556956","name":"","assets":["8CC9472VFV"]},{"bms":"6301932","name":"","assets":["CNK0123LQ8"]},{"bms":"6245200","name":"","assets":["8CC0104BPT"]},{"bms":"6005234","name":"","assets":["8CC2200JY4"]},{"bms":"5283037","name":"","assets":[]},{"bms":"4650035","name":"","assets":[]},{"bms":"799314","name":"","assets":[]},{"bms":"4435602","name":"","assets":["8PKBZM3"]},{"bms":"3892351","name":"","assets":[]},{"bms":"4807931","name":"","assets":[]},{"bms":"2731498","name":"","assets":[]},{"bms":"5057778","name":"","assets":[]},{"bms":"4196581","name":"","assets":["5CG62034MV"]},{"bms":"814941","name":"","assets":[]},{"bms":"4181154","name":"","assets":[]},{"bms":"2742414","name":"","assets":[]},{"bms":"5167563","name":"","assets":[]},{"bms":"5528978","name":"","assets":["5CD1280GFT"]},{"bms":"5813991","name":"","assets":[]},{"bms":"3229381","name":"","assets":["M9NXCV14H16638G"]},{"bms":"5151754","name":"","assets":["N1NXCV21Z13504A"]},{"bms":"5726642","name":"","assets":[]},{"bms":"5546116","name":"","assets":[]},{"bms":"2868798","name":"","assets":["5CD2073HR3"]},{"bms":"3079011","name":"","assets":["mbnxcv25704347a"]},{"bms":"4127689","name":"","assets":["mbnxcv257032477"]},{"bms":"1917197","name":"","assets":["5CD2250QMP"]},{"bms":"5443684","name":"","assets":["5CD229CX0G"]},{"bms":"5387342","name":"","assets":["5CD229CX49"]},{"bms":"4490370","name":"","assets":["6YY75M3"]},{"bms":"1718805","name":"","assets":["5CG034138V"]},{"bms":"3032419","name":"","assets":["5CD041BRMV"]},{"bms":"5798387","name":"","assets":["5CG0305Z71"]},{"bms":"2240117","name":"","assets":["5CG6242JMP"]},{"bms":"3002248","name":"","assets":["5CG7155PX7"]},{"bms":"3266815","name":"","assets":["5CD917117B"]},{"bms":"2464215","name":"","assets":["5CG8246SWS"]},{"bms":"3365710","name":"","assets":["5CG8528VHD"]},{"bms":"1286844","name":"","assets":["5CG9083PN2"]},{"bms":"3757570","name":"","assets":["5CG9083NW9"]},{"bms":"4158707","name":"","assets":["5CG9083PMQ"]},{"bms":"1932377","name":"","assets":["5CG94202HV","5CG129WKS9"]},{"bms":"5939212","name":"","assets":["5CG0131HPF"]},{"bms":"5676924","name":"","assets":["5CG0139D7C"]},{"bms":"5200766","name":"","assets":["5CG0131HMY"]},{"bms":"3821128","name":"","assets":["5CG0131HN6"]},{"bms":"2988429","name":"","assets":["5CG0131HP6"]},{"bms":"4177987","name":"","assets":["5CG034138K"]},{"bms":"5287042","name":"","assets":["5CD032KT8S"]},{"bms":"1389774","name":"","assets":["PF2JZV30"]},{"bms":"1061120","name":"","assets":["PF2JNPVY"]},{"bms":"1301696","name":"","assets":["PF2GX2GD"]},{"bms":"2593132","name":"","assets":["5CD151GJ05"]},{"bms":"4117621","name":"","assets":["8CC9472VCR","8CC1111KYQ"]},{"bms":"4260963","name":"","assets":["8CC1010QYK"]},{"bms":"5292863","name":"","assets":["8CC0491YZR"]},{"bms":"4122154","name":"","assets":["8cc1111ky3"]},{"bms":"5485417","name":"","assets":["8CC1111KVD"]},{"bms":"3853969","name":"","assets":["8CC2140CF4"]},{"bms":"5148972","name":"","assets":["8CC2140C97"]},{"bms":"5288277","name":"","assets":["8CC2200JX3"]},{"bms":"5670496","name":"","assets":["8CC2200JDZ"]},{"bms":"4728780","name":"","assets":["8CC2200JYD"]},{"bms":"5783089","name":"","assets":["8CC2200JTN"]},{"bms":"5488302","name":"","assets":["8CC22300SP"]},{"bms":"3849831","name":"","assets":["8cc9272vpm"]},{"bms":"3534178","name":"","assets":["8cc011088q"]},{"bms":"5743818","name":"","assets":["8CC84006MP","8CN234035P"]},{"bms":"5240612","name":"","assets":["8CC90803YJ"]},{"bms":"5366203","name":"","assets":["8CC90803W1"]},{"bms":"5293369","name":"","assets":["8CC8521QGW","8CC0310TPB"]},{"bms":"5821077","name":"","assets":["8CC8383CP8"]},{"bms":"4126058","name":"","assets":["8CC90803W6"]},{"bms":"4731377","name":"","assets":["8CG72244JBR"]},{"bms":"3113005","name":"","assets":["8CG7244JDT"]},{"bms":"3470004","name":"","assets":["CZC0049XBH"]},{"bms":"5656138","name":"","assets":["8CC83219DZ"]},{"bms":"3725332","name":"","assets":["8CC9492XRN"]},{"bms":"4418567","name":"","assets":["8CC0110851"]},{"bms":"2841326","name":"","assets":["8CC0104BR1"]},{"bms":"4677962","name":"","assets":["8CC01106D0"]},{"bms":"5201142","name":"","assets":["8CC83219JT"]},{"bms":"5963364","name":"","assets":["8cc0310htp"]},{"bms":"6238525","name":"","assets":["8CC0490VJG"]},{"bms":"482275","name":"","assets":["CZC021CDG3"]},{"bms":"5505965","name":"","assets":["8CC0450D4D"]},{"bms":"4548539","name":"","assets":["8CC1010QYJ"]},{"bms":"3777801","name":"","assets":["8CC1010QYY"]},{"bms":"5605887","name":"","assets":["8CC1111L00"]},{"bms":"4054840","name":"","assets":["XNLW49WJGM"]},{"bms":"5958734","name":"","assets":["8CN23403BC"]},{"bms":"6074984","name":"","assets":["8CN23403C9"]},{"bms":"3806300","name":"","assets":["8CN23403JB"]},{"bms":"5214594","name":"","assets":["8CN234030Y"]},{"bms":"3749392","name":"","assets":["8CN23403G7"]},{"bms":"5760545","name":"","assets":[]},{"bms":"5759810","name":"","assets":["8CG0094Z3N"]},{"bms":"5756410","name":"","assets":["8CG0094RWX"]},{"bms":"6302164","name":"","assets":["8CG12900RK"]},{"bms":"5658628","name":"","assets":[]},{"bms":"3668022","name":"","assets":["5CG125XQDD"]},{"bms":"2509771","name":"","assets":["5CG202Z82K"]},{"bms":"3328050","name":"","assets":["5CG203X69G"]},{"bms":"3204966","name":"","assets":["5CG227W7XX"]},{"bms":"486189","name":"","assets":["5CG227W822","5CG4172VCW"]},{"bms":"4283973","name":"","assets":["5CG227WXY5"]},{"bms":"2660821","name":"","assets":["5CG227W85R"]},{"bms":"4068040","name":"","assets":["5CG224W4YL"]},{"bms":"4456007","name":"","assets":["#N/A"]},{"bms":"2488080","name":"","assets":[]},{"bms":"662197","name":"","assets":[]},{"bms":"5362724","name":"","assets":[]},{"bms":"485017","name":"","assets":[]},{"bms":"832762","name":"","assets":[]},{"bms":"3810317","name":"","assets":[]},{"bms":"3991303","name":"","assets":[]},{"bms":"1649815","name":"","assets":[]},{"bms":"3804584","name":"","assets":[]},{"bms":"3953813","name":"","assets":[]},{"bms":"3862255","name":"","assets":[]},{"bms":"4647980","name":"","assets":[]},{"bms":"3140797","name":"","assets":[]},{"bms":"5341053","name":"","assets":[]},{"bms":"3765547","name":"","assets":[]},{"bms":"4562298","name":"","assets":[]},{"bms":"829631","name":"","assets":[]},{"bms":"5458114","name":"","assets":[]},{"bms":"6149522","name":"","assets":[]},{"bms":"2759417","name":"","assets":[]},{"bms":"5661116","name":"","assets":[]},{"bms":"832732","name":"","assets":[]},{"bms":"2718250","name":"","assets":[]},{"bms":"3515553","name":"","assets":[]},{"bms":"3871198","name":"","assets":[]},{"bms":"2732785","name":"","assets":[]},{"bms":"3556997","name":"","assets":[]},{"bms":"3556996","name":"","assets":[]},{"bms":"4545719","name":"","assets":[]},{"bms":"3838732","name":"","assets":[]},{"bms":"3803278","name":"","assets":[]},{"bms":"3306332","name":"","assets":[]},{"bms":"5115478","name":"","assets":["7M4B7M3"]},{"bms":"4989039","name":"","assets":["6XMM7M3"]},{"bms":"6028101","name":"","assets":["MCNXCV10U94250C"]},{"bms":"5086902","name":"","assets":["MCNXCV10U94550A"]},{"bms":"4509776","name":"","assets":[]},{"bms":"4256906","name":"","assets":[]},{"bms":"5057644","name":"","assets":[]},{"bms":"5070563","name":"","assets":[]},{"bms":"5700183","name":"","assets":[]},{"bms":"5882648","name":"","assets":[]},{"bms":"5090786","name":"","assets":[]},{"bms":"4441868","name":"","assets":["5CD3045Q0Q"]},{"bms":"5996480","name":"","assets":["5CD3045Q56"]},{"bms":"5267764","name":"","assets":["5CD3045PZ8"]},{"bms":"3768077","name":"","assets":["MYXQJFQ36N"]},{"bms":"3264402","name":"","assets":[]},{"bms":"3984843","name":"","assets":[]},{"bms":"2998944","name":"","assets":[]},{"bms":"5338996","name":"","assets":[]},{"bms":"5529731","name":"","assets":[]},{"bms":"5644206","name":"","assets":[]},{"bms":"5538058","name":"","assets":[]},{"bms":"5558974","name":"","assets":[]},{"bms":"5986410","name":"","assets":[]},{"bms":"5999307","name":"","assets":[]},{"bms":"3898950","name":"","assets":[]},{"bms":"6026665","name":"","assets":[]},{"bms":"5982602","name":"","assets":[]},{"bms":"5818646","name":"","assets":["5CD40800VB"]},{"bms":"5996464","name":"","assets":["5CD40800VS"]},{"bms":"5556179","name":"","assets":[]},{"bms":"5527682","name":"","assets":[]},{"bms":"5854406","name":"","assets":["5CD423GTSN"]},{"bms":"5626470","name":"","assets":[]},{"bms":"5779327","name":"","assets":[]},{"bms":"6025702","name":"","assets":[]},{"bms":"3474381","name":"","assets":[]},{"bms":"5693817","name":"","assets":[]},{"bms":"6025439","name":"","assets":[]},{"bms":"4499944","name":"","assets":["5CD4438XXQ"]},{"bms":"5642381","name":"","assets":[]},{"bms":"5560296","name":"","assets":[]},{"bms":"5975213","name":"","assets":[]},{"bms":"5621879","name":"","assets":[]},{"bms":"5612091","name":"","assets":[]},{"bms":"5539796","name":"","assets":[]},{"bms":"5555163","name":"","assets":[]},{"bms":"5620055","name":"","assets":[]},{"bms":"5541407","name":"","assets":[]},{"bms":"5300347","name":"","assets":[]},{"bms":"5615937","name":"","assets":[]},{"bms":"5667671","name":"","assets":[]},{"bms":"5611319","name":"","assets":[]},{"bms":"5531069","name":"","assets":[]},{"bms":"5221274","name":"","assets":[]},{"bms":"5662831","name":"","assets":[]},{"bms":"5208613","name":"","assets":[]},{"bms":"5678689","name":"","assets":[]},{"bms":"5658929","name":"","assets":[]},{"bms":"4338308","name":"","assets":[]},{"bms":"5679710","name":"","assets":[]},{"bms":"5561571","name":"","assets":[]},{"bms":"5584303","name":"","assets":[]},{"bms":"5542184","name":"","assets":[]},{"bms":"5637969","name":"","assets":[]},{"bms":"5682154","name":"","assets":[]},{"bms":"5637948","name":"","assets":[]},{"bms":"5679455","name":"","assets":[]},{"bms":"5584296","name":"","assets":[]},{"bms":"5549274","name":"","assets":[]},{"bms":"1281062","name":"","assets":[]},{"bms":"5542079","name":"","assets":[]},{"bms":"5628315","name":"","assets":[]},{"bms":"5661487","name":"","assets":[]},{"bms":"4842407","name":"","assets":[]},{"bms":"5601698","name":"","assets":[]},{"bms":"5553221","name":"","assets":[]},{"bms":"5612725","name":"","assets":[]},{"bms":"5554877","name":"","assets":[]},{"bms":"5387324","name":"","assets":[]},{"bms":"4441908","name":"","assets":[]},{"bms":"5649421","name":"","assets":[]},{"bms":"5621477","name":"","assets":[]},{"bms":"5682271","name":"","assets":[]},{"bms":"4042493","name":"","assets":[]},{"bms":"5609471","name":"","assets":[]},{"bms":"4806853","name":"","assets":[]},{"bms":"5387508","name":"","assets":[]},{"bms":"5601782","name":"","assets":[]},{"bms":"5661572","name":"","assets":[]},{"bms":"5606106","name":"","assets":[]},{"bms":"5621885","name":"","assets":[]},{"bms":"5651050","name":"","assets":[]},{"bms":"5558409","name":"","assets":[]},{"bms":"5081486","name":"","assets":[]},{"bms":"5553075","name":"","assets":[]},{"bms":"5613697","name":"","assets":[]},{"bms":"5553137","name":"","assets":[]},{"bms":"5595667","name":"","assets":[]},{"bms":"5686298","name":"","assets":[]},{"bms":"5583558","name":"","assets":[]},{"bms":"1855646","name":"","assets":[]},{"bms":"5552693","name":"","assets":[]},{"bms":"5546106","name":"","assets":[]},{"bms":"5649477","name":"","assets":[]},{"bms":"5267253","name":"","assets":[]},{"bms":"5686891","name":"","assets":[]},{"bms":"2716969","name":"","assets":[]},{"bms":"4731331","name":"","assets":[]},{"bms":"5539420","name":"","assets":[]},{"bms":"5561457","name":"","assets":[]},{"bms":"749296","name":"","assets":[]},{"bms":"5387511","name":"","assets":[]},{"bms":"5527069","name":"","assets":[]},{"bms":"6259097","name":"","assets":[]},{"bms":"5212633","name":"","assets":[]},{"bms":"5794921","name":"","assets":[]},{"bms":"5724947","name":"","assets":[]},{"bms":"5644020","name":"","assets":[]},{"bms":"5174887","name":"","assets":[]},{"bms":"5672635","name":"","assets":[]},{"bms":"5692073","name":"","assets":[]},{"bms":"5666344","name":"","assets":[]},{"bms":"5205016","name":"","assets":[]},{"bms":"2231626","name":"","assets":[]},{"bms":"5729149","name":"","assets":[]},{"bms":"5815899","name":"","assets":[]},{"bms":"5615942","name":"","assets":[]},{"bms":"5819304","name":"","assets":[]},{"bms":"5820149","name":"","assets":[]},{"bms":"5655111","name":"","assets":[]},{"bms":"5825960","name":"","assets":[]},{"bms":"4972388","name":"","assets":[]},{"bms":"4450033","name":"","assets":[]},{"bms":"5998239","name":"","assets":[]},{"bms":"5764857","name":"","assets":[]},{"bms":"5815841","name":"","assets":[]},{"bms":"5807608","name":"","assets":[]},{"bms":"5854396","name":"","assets":[]},{"bms":"5815142","name":"","assets":[]},{"bms":"5822492","name":"","assets":[]},{"bms":"5855634","name":"","assets":[]},{"bms":"5989549","name":"","assets":[]},{"bms":"5830567","name":"","assets":[]},{"bms":"5801650","name":"","assets":[]},{"bms":"5936265","name":"","assets":[]},{"bms":"5887119","name":"","assets":[]},{"bms":"5891912","name":"","assets":[]},{"bms":"5834187","name":"","assets":[]},{"bms":"5836339","name":"","assets":[]},{"bms":"5272319","name":"","assets":[]},{"bms":"2762256","name":"","assets":[]},{"bms":"5098229","name":"","assets":[]},{"bms":"5736226","name":"","assets":[]},{"bms":"5975109","name":"","assets":[]},{"bms":"4891277","name":"","assets":[]},{"bms":"5015768","name":"","assets":[]},{"bms":"5733278","name":"","assets":[]},{"bms":"5568329","name":"","assets":[]},{"bms":"5678685","name":"","assets":[]},{"bms":"5604349","name":"","assets":[]},{"bms":"5506874","name":"","assets":[]},{"bms":"5972187","name":"","assets":[]},{"bms":"4009966","name":"","assets":["5CD5109VW0"]},{"bms":"6018694","name":"","assets":["5CD511D8HN"]},{"bms":"5902612","name":"","assets":[]},{"bms":"5898669","name":"","assets":[]},{"bms":"5899320","name":"","assets":[]},{"bms":"5903658","name":"","assets":[]},{"bms":"4375203","name":"","assets":[]},{"bms":"5936810","name":"","assets":[]},{"bms":"5938905","name":"","assets":[]},{"bms":"5936723","name":"","assets":[]},{"bms":"5169628","name":"","assets":[]},{"bms":"5925690","name":"","assets":[]},{"bms":"5946510","name":"","assets":[]},{"bms":"5719108","name":"","assets":[]},{"bms":"6010397","name":"","assets":[]},{"bms":"6030542","name":"","assets":[]},{"bms":"6008274","name":"","assets":[]},{"bms":"6009234","name":"","assets":["5CD52016Q5"]},{"bms":"6142880","name":"","assets":[]},{"bms":"5841470","name":"","assets":["5CD5296JSR"]},{"bms":"6082589","name":"","assets":["5CD5296JT6"]},{"bms":"6112410","name":"","assets":["5CD5299HSK"]},{"bms":"6007831","name":"","assets":[]},{"bms":"1859308","name":"","assets":["CQGP6DQ3CV"]}]};
 
 let RAW=[], KPI=[];
 let ls='',lp=0, ts='',tp=0, ds='',dp=0;
@@ -137,24 +135,9 @@ const PG=20;
 let CI=null;
 
 async function fetchCSV(url){
-  // Try multiple proxies in sequence
-  const proxies=[
-    u=>u, // direct
-    u=>'https://corsproxy.io/?'+encodeURIComponent(u),
-    u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
-    u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u),
-  ];
-  for(const proxy of proxies){
-    try{
-      const r=await fetch(proxy(url),{cache:'no-store'});
-      if(r.ok){
-        const t=await r.text();
-        // validate: must have at least 2 lines and look like CSV
-        if(t.length>200&&t.includes(',')&&t.split('\n').length>2)return t;
-      }
-    }catch(e){}
-  }
-  throw new Error('Não foi possível carregar os dados. Verifica a tua ligação à internet ou tenta mais tarde.');
+  const r=await fetch(url);
+  if(!r.ok) throw new Error('HTTP '+r.status+' ao carregar CSV');
+  return await r.text();
 }
 
 function parseCSV(text){
@@ -212,34 +195,26 @@ async function init(){
   document.getElementById("tbar").style.display="none";
   document.getElementById("ldot").style.display="none";
   if(CI){try{CI.destroy();}catch(e){}CI=null;}
-  
-  // Try to load live CSV first, fall back to embedded summary data
-  let usedLiveData=false;
   try{
-    setStatus("A carregar dados em tempo real...");
-    const t2=await fetchCSV(CSV_KPI);
+    setStatus("A descarregar CSV (~5MB)...");
+    const[t1,t2]=await Promise.all([fetchCSV(CSV_RAW),fetchCSV(CSV_KPI)]);
+    setStatus("A processar dados RAW...");
+    await new Promise(r=>setTimeout(r,10));
+    RAW=cleanRows(parseCSV(t1));
+    setStatus("A processar KPI...");
+    await new Promise(r=>setTimeout(r,10));
     KPI=cleanRows(parseCSV(t2));
-    // Also try RAW but with timeout — it's huge
-    const rawPromise=fetchCSV(CSV_RAW).then(t=>{RAW=cleanRows(parseCSV(t));});
-    await Promise.race([rawPromise, new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),12000))]);
-    if(RAW.length>2){usedLiveData=true;}
+    if(RAW.length<2||KPI.length<2) throw new Error("Ficheiros CSV vazios ou sem dados.");
+    setStatus("A calcular KPIs...");
+    await new Promise(r=>setTimeout(r,10));
+    document.getElementById("hsub").textContent=`Actualizado às ${new Date().toLocaleTimeString("pt-PT")} · ${(RAW.length-1).toLocaleString("pt-PT")} registos`;
+    document.getElementById("ldot").style.display="block";
+    document.getElementById("tbar").style.display="block";
+    ls="";lp=0;ts="";tp=0;ds="";dp=0;
+    showTab("raw");
   }catch(e){
-    // Live data failed — use embedded summary
-    KPI=KPI.length>1?KPI:[];
+    document.getElementById("app").innerHTML<`<div class="state"><div style="font-size:30px">⚠️</div><div class="st">Erro ao carregar dados</div><div class="ss">${e.message}<br><br>Confirma que os ficheiros CSV estão publicados na web via <strong>Ficheiro → Publicar na Web → CSV</strong>.</div><button class="btn-solid" onclick="init()">Tentar novamente</button></div>`;
   }
-  
-  setStatus("A calcular KPIs...");
-  await new Promise(r=>setTimeout(r,10));
-  
-  const ts_label=usedLiveData
-    ? `Tempo real · ${(RAW.length-1).toLocaleString("pt-PT")} registos · ${new Date().toLocaleTimeString("pt-PT")}`
-    : `Dados consolidados · ${SUMMARY.total_assets.toLocaleString("pt-PT")} registos (actualiza ao abrir)`;
-  
-  document.getElementById("hsub").textContent=ts_label;
-  document.getElementById("ldot").style.display="block";
-  document.getElementById("tbar").style.display="block";
-  ls="";lp=0;ts="";tp=0;ds="";dp=0;
-  showTab("raw");
 }
 
 function showTab(t){
@@ -248,17 +223,12 @@ function showTab(t){
   if(t==='raw')renderRaw(); else renderKPI();
 }
 
-// ══ RAW DATA ══
 function renderRaw(){
-  // Use SUMMARY embedded data if live RAW not available
-  if(RAW.length<2){
-    renderRawFromSummary();
-    return;
-  }
+  if(RAW.length<2){document.getElementById('app').innerHTML='<div class="state"><div class="ss">Sem dados em RAW DATA.</div></div>';return;}
   const data=toObj(RAW);
   const H=RAW[0];
   const WAH  =fc(H,'WAH STATUS','WAH_STATUS','WAHSTATUS');
-  const LOC  =fc(H,'LOCATION TY','LOCATION TYPE','LOCATION_TY');
+  const LOC  =fc(H,'LOCATION TY','LOCATION TYPE;, LOCATION_TY';
   const RET  =fc(H,'RETENTION');
   const BMS  =fc(H,'BMS');
   const NAME =fc(H,'COLABNAME','COLAB NAME','NAME','COLABORADOR');
@@ -266,7 +236,6 @@ function renderRaw(){
   const LC   =fc(H,'LIFE CIC','LIFE CYCLE','LIFECYCLE','LIFE_CIC');
   const ASSET=fc(H,'SERIAL NUMBER','SERIAL','ASSET','ID');
 
-  // Normaliza: trim + lowercase + NFC unicode
   function norm(s){
     if(!s)return'';
     return s.trim().toLowerCase()
@@ -274,36 +243,25 @@ function renderRaw(){
       .normalize('NFC');
   }
 
-  // WHITELIST exacta — baseada nos valores reais do ficheiro Excel
-  // Asset Types válidos (22 valores, lidos directamente do ficheiro)
   const VALID_ASSET_TYPES=new Set([
     'armário','banco corrido','bloco gavetas','cadeira','cadeira de cafeteria',
     'desktop','diversos','docks','mesa','mesa de cafeteria','minipc','mobiliário',
     'monitor','móvel standard','outros','portátil','posto de trabalho','routers',
     'secretária','tablets','thin client',"tv's (wallboard)"
   ]);
-  // Location Types válidos (7 valores, lidos directamente do ficheiro)
   const VALID_LOC_TYPES=new Set([
     'apartamentos','armazém','avt','edificios','staging','waha','warehouse'
   ]);
-  // WAH Status válidos (lidos directamente do ficheiro — exclui #N/A, #VALUE!, #ERROR!, #REF!)
   const VALID_WAH=new Set(['active','terminated','leave of absence','candidate']);
 
   function isValidAssetType(v){return!!v&&VALID_ASSET_TYPES.has(norm(v));}
   function isValidLocType(v){return!!v&&VALID_LOC_TYPES.has(norm(v));}
   function isValidWAH(v){return!!v&&VALID_WAH.has(norm(v));}
-
-  // PC types para secção 5
   const PC_TYPES_SET=new Set(['thin client','portátil','minipc','desktop']);
   function isPCType(v){return PC_TYPES_SET.has(norm(v||''));}
 
-  // Life Cycle: valores reais no ficheiro são exactamente 'mais 3 anos' e 'menos 3 anos'
-  function normLC(v){return norm(v||'');}
-
-  // Colecta todos os Asset Types válidos únicos
   const allTypes=[...new Set(data.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
 
-  // ── 1. WAH STATUS × ASSET TYPE (valid types only) ──
   const wahByType={};
   const wahTotals={};
   data.forEach(r=>{
@@ -318,7 +276,6 @@ function renderRaw(){
   const actTotal=wahStatuses.filter(k=>/active/i.test(k)).reduce((s,k)=>s+(wahTotals[k]||0),0);
   const termTotal=wahStatuses.filter(k=>/terminat/i.test(k)).reduce((s,k)=>s+(wahTotals[k]||0),0);
 
-  // ── 2. LOCATION TYPE × ASSET TYPE (valid types only) ──
   const locByType={};
   const locTotals={};
   data.forEach(r=>{
@@ -332,12 +289,10 @@ function renderRaw(){
   const locKeys=Object.keys(locByType).sort((a,b)=>locTotals[b]-locTotals[a]);
   const locGrandTotal=Object.values(locTotals).reduce((s,v)=>s+v,0);
 
-  // ── 3. TERMINATED + RETENTION ──
   const term=data.filter(r=>norm(r[WAH]||'')==='terminated');
   const withInfo=term.filter(r=>{const v=(r[RET]||'').trim();return v&&!v.startsWith('#');});
   const noInfo  =term.filter(r=>{const v=(r[RET]||'').trim();return!v||v.startsWith('#');});
 
-  // ── 4. WAHA + Terminated list ──
   const wahaTerminated=data.filter(r=>norm(r[LOC]||'')==='waha'&&norm(r[WAH]||'')==='terminated');
   const tmap={};
   wahaTerminated.forEach(r=>{
@@ -355,7 +310,6 @@ function renderRaw(){
   const pcData=data.filter(r=>isPCType((r[ATYPE]||'').trim()));
   const pcLocTypes=[...new Set(pcData.map(r=>(r[LOC]||'').trim()).filter(isValidLocType))].sort();
   const pcATypes=[...new Set(pcData.map(r=>(r[ATYPE]||'').trim()).filter(isValidAssetType))].sort();
-  // dmap: { locType: { assetType: { over3, under3, unk } } }
   const dmap={};
   pcLocTypes.forEach(l=>{dmap[l]={};pcATypes.forEach(a=>{dmap[l][a]={over3:0,under3:0,unk:0};});});
   pcData.forEach(r=>{
@@ -367,12 +321,10 @@ function renderRaw(){
     else if(lc==='menos 3 anos')dmap[loc][at].under3++;
     else dmap[loc][at].unk++;
   });
-  const pcLocTotal=pcLocTypes.reduce((s,l)=>s+pcATypes.reduce((ss,a)=>ss+dmap[l][a].over3+dmap[l][a].under3+dmap[l][a].unk,0),0);
+  const pcLocTotal=pcLocTypes.reduce((s,l)=>s+pcATypes.reduce((ss,a)=>ss+dmap[l][a].over3+dmap[l][a].under3+dmap[l][a].unk, 0),0);
 
-  // ════ RENDER ════
   let h='<div class="fade">';
 
-  // ── 1. WAH STATUS × ASSET TYPE ──
   h+=`<div class="sec"><div class="sec-lbl">1 · WAH Status — Assets por Estado e Asset Type</div>
   <div class="kpi-row">
     <div class="kpi g"><div class="kpi-lbl">WAH Active</div><div class="kpi-val">${actTotal}</div><div class="kpi-sub">assets activos</div></div>
@@ -389,7 +341,6 @@ function renderRaw(){
     allTypes.forEach(t=>{ h+=`<td class="tr">${wahByType[wah][t]||0}</td>`; });
     h+=`<td class="tr" style="font-weight:600">${wahTotals[wah]}</td></tr>`;
   });
-  // Totals row
   h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td>`;
   allTypes.forEach(t=>{
     const tot=wahStatuses.reduce((s,w)=>s+(wahByType[w][t]||0),0);
@@ -398,7 +349,6 @@ function renderRaw(){
   h+=`<td class="tr">${data.length}</td></tr>`;
   h+=`</tbody></table></div></div></div><div class="div"></div>`;
 
-  // ── 2. LOCATION TYPE × ASSET TYPE ──
   h+=`<div class="sec"><div class="sec-lbl">2 · Assets por Location Type e Asset Type</div>
   <div class="panel"><div class="tw"><table>
   <thead><tr><th>Location Type</th>`;
@@ -411,7 +361,6 @@ function renderRaw(){
     allTypes.forEach(t=>{ h+=`<td class="tr">${locByType[loc][t]||0}</td>`; });
     h+=`<td class="tr" style="font-weight:600">${tot}</td><td class="tr">${pct}%</td></tr>`;
   });
-  // Totals row
   h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td>`;
   allTypes.forEach(t=>{
     const tot=locKeys.reduce((s,l)=>s+(locByType[l][t]||0),0);
@@ -420,7 +369,6 @@ function renderRaw(){
   h+=`<td class="tr">${locGrandTotal}</td><td class="tr">100%</td></tr>`;
   h+=`</tbody></table></div></div></div><div class="div"></div>`;
 
-  // ── 3. RETENTION ──
   const cov=termTotal?((withInfo.length/termTotal)*100).toFixed(0):0;
   h+=`<div class="sec"><div class="sec-lbl">3 · WAH Terminated — Retention Status (Acompanhamento)</div>
   <div class="kpi-row">
@@ -430,7 +378,6 @@ function renderRaw(){
     <div class="kpi b"><div class="kpi-lbl">Taxa de Cobertura</div><div class="kpi-val">${cov}%</div><div class="kpi-sub">terminados com info</div></div>
   </div></div><div class="div"></div>`;
 
-  // ── 4. WAHA + TERMINATED LIST ──
   const tf=tlist.filter(r=>!ts||r.bms.toLowerCase().includes(ts)||r.name.toLowerCase().includes(ts)||r.assets.some(a=>a.toLowerCase().includes(ts)));
   const tpaged=tf.slice(tp*PG,tp*PG+PG);
   const tpages=Math.ceil(tf.length/PG);
@@ -453,8 +400,7 @@ function renderRaw(){
     <button class="pb" onclick="tp++;renderRaw()" ${tp>=tpages-1?'disabled':''}>Seg →</button></div>`;
   h+=`</div></div><div class="div"></div>`;
 
-  // ── 5. PC ASSETS × LOCATION TYPE × ASSET TYPE × LIFE CYCLE ──
-  // Colunas: para cada Asset Type → ≤3 anos | >3 anos
+  // ── 5. PCs — Life Cycle por Location Type e Asset Type ──
   const colSpan=pcATypes.length*2;
   h+=`<div class="sec"><div class="sec-lbl">5 · PCs — Life Cycle por Location Type e Asset Type</div>
   <div class="panel">
@@ -485,9 +431,7 @@ function renderRaw(){
     });
     h+=`</tr>`;
   });
-  // Totals row
-  const totLocTotal=pcLocTotal;
-  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td><td class="tr">${totLocTotal}</td>`;
+  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td><td class="tr">${pcLocTotal}</td>`;
   pcATypes.forEach(a=>{
     const totU=pcLocTypes.reduce((s,l)=>s+dmap[l][a].under3,0);
     const totO=pcLocTypes.reduce((s,l)=>s+dmap[l][a].over3,0);
@@ -504,188 +448,21 @@ function renderRaw(){
   document.getElementById('app').innerHTML=h;
 }
 
-// ══ RECOVERS KPI ══
-
-function renderRawFromSummary(){
-  const S=SUMMARY;
-  const allTypes=S.all_atypes.sort();
-  const allLocs=S.all_locs.sort();
-  const wahStatuses=Object.keys(S.wah_by_type).sort();
-  const locKeys=Object.keys(S.loc_by_type).sort((a,b)=>{
-    const ta=Object.values(S.loc_by_type[a]).reduce((s,v)=>s+v,0);
-    const tb=Object.values(S.loc_by_type[b]).reduce((s,v)=>s+v,0);
-    return tb-ta;
-  });
-  const locGrandTotal=locKeys.reduce((s,l)=>s+Object.values(S.loc_by_type[l]).reduce((ss,v)=>ss+v,0),0);
-  const actTotal=wahStatuses.filter(k=>/active/i.test(k)).reduce((s,k)=>s+(Object.values(S.wah_by_type[k]||{}).reduce((ss,v)=>ss+v,0)),0);
-  const termTotal=wahStatuses.filter(k=>/terminat/i.test(k)).reduce((s,k)=>s+(Object.values(S.wah_by_type[k]||{}).reduce((ss,v)=>ss+v,0)),0);
-  const cov=termTotal?((S.term_with_retention/(S.term_with_retention+S.term_without_retention))*100).toFixed(0):0;
-
-  // PC data from SUMMARY
-  const pcLocs=Object.keys(S.pc_lc).sort();
-  const pcATypesSet=new Set();
-  pcLocs.forEach(l=>Object.keys(S.pc_lc[l]).forEach(a=>pcATypesSet.add(a)));
-  const pcATypes=[...pcATypesSet].sort();
-  const pcLocTotal=pcLocs.reduce((s,l)=>s+pcATypes.reduce((ss,a)=>ss+(S.pc_lc[l][a]?S.pc_lc[l][a].over3+S.pc_lc[l][a].under3+S.pc_lc[l][a].unk:0),0),0);
-
-  // WAHA terminated list
-  const tlist=S.waha_terminated.sort((a,b)=>a.name.localeCompare(b.name));
-  const tf=tlist.filter(r=>!ts||r.bms.toLowerCase().includes(ts)||r.name.toLowerCase().includes(ts)||r.assets.some(a=>a.toLowerCase().includes(ts)));
-  const tpaged=tf.slice(tp*PG,tp*PG+PG);
-  const tpages=Math.ceil(tf.length/PG);
-  const totalWahaAssets=tlist.reduce((s,r)=>s+r.assets.length,0);
-
-  let h='<div class="fade">';
-
-  // 1. WAH STATUS
-  h+=`<div class="sec"><div class="sec-lbl">1 · WAH Status — Assets por Estado e Asset Type</div>
-  <div class="kpi-row">
-    <div class="kpi g"><div class="kpi-lbl">WAH Active</div><div class="kpi-val">${actTotal}</div><div class="kpi-sub">assets activos</div></div>
-    <div class="kpi r"><div class="kpi-lbl">WAH Terminated</div><div class="kpi-val">${termTotal}</div><div class="kpi-sub">assets terminados</div></div>
-    <div class="kpi b"><div class="kpi-lbl">Total Geral</div><div class="kpi-val">${S.total_assets}</div><div class="kpi-sub">todos os assets</div></div>
-  </div>
-  <div class="panel"><div class="tw"><table>
-  <thead><tr><th>WAH Status</th>`;
-  allTypes.forEach(t=>{ h+=`<th class="tr">${t}</th>`; });
-  h+=`<th class="tr">Total</th></tr></thead><tbody>`;
-  wahStatuses.forEach(wah=>{
-    const cls=/active/i.test(wah)?'bg':/terminat/i.test(wah)?'br':'bx';
-    const rowTotal=allTypes.reduce((s,t)=>s+((S.wah_by_type[wah]||{})[t]||0),0);
-    h+=`<tr><td><span class="badge ${cls}">${wah}</span></td>`;
-    allTypes.forEach(t=>{ h+=`<td class="tr">${(S.wah_by_type[wah]||{})[t]||0}</td>`; });
-    h+=`<td class="tr" style="font-weight:600">${rowTotal}</td></tr>`;
-  });
-  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td>`;
-  allTypes.forEach(t=>{ const tot=wahStatuses.reduce((s,w)=>s+((S.wah_by_type[w]||{})[t]||0),0); h+=`<td class="tr">${tot}</td>`; });
-  h+=`<td class="tr">${S.total_assets}</td></tr>`;
-  h+=`</tbody></table></div></div></div><div class="div"></div>`;
-
-  // 2. LOCATION TYPE
-  h+=`<div class="sec"><div class="sec-lbl">2 · Assets por Location Type e Asset Type</div>
-  <div class="panel"><div class="tw"><table>
-  <thead><tr><th>Location Type</th>`;
-  allTypes.forEach(t=>{ h+=`<th class="tr">${t}</th>`; });
-  h+=`<th class="tr">Total</th><th class="tr">%</th></tr></thead><tbody>`;
-  locKeys.forEach(loc=>{
-    const tot=Object.values(S.loc_by_type[loc]).reduce((s,v)=>s+v,0);
-    const pct=((tot/locGrandTotal)*100).toFixed(1);
-    h+=`<tr><td>${loc}</td>`;
-    allTypes.forEach(t=>{ h+=`<td class="tr">${(S.loc_by_type[loc]||{})[t]||0}</td>`; });
-    h+=`<td class="tr" style="font-weight:600">${tot}</td><td class="tr">${pct}%</td></tr>`;
-  });
-  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td>`;
-  allTypes.forEach(t=>{ const tot=locKeys.reduce((s,l)=>s+((S.loc_by_type[l]||{})[t]||0),0); h+=`<td class="tr">${tot}</td>`; });
-  h+=`<td class="tr">${locGrandTotal}</td><td class="tr">100%</td></tr>`;
-  h+=`</tbody></table></div></div></div><div class="div"></div>`;
-
-  // 3. RETENTION
-  h+=`<div class="sec"><div class="sec-lbl">3 · WAH Terminated — Retention Status</div>
-  <div class="kpi-row">
-    <div class="kpi r"><div class="kpi-lbl">Terminated Total</div><div class="kpi-val">${S.term_with_retention+S.term_without_retention}</div></div>
-    <div class="kpi g"><div class="kpi-lbl">Com info</div><div class="kpi-val">${S.term_with_retention}</div></div>
-    <div class="kpi a"><div class="kpi-lbl">Sem info / #N/A</div><div class="kpi-val">${S.term_without_retention}</div></div>
-    <div class="kpi b"><div class="kpi-lbl">Taxa de Cobertura</div><div class="kpi-val">${cov}%</div></div>
-  </div></div><div class="div"></div>`;
-
-  // 4. WAHA TERMINATED LIST
-  h+=`<div class="sec"><div class="sec-lbl">4 · Lista WAHA + WAH Terminated</div>
-  <div class="panel">
-    <div class="toolbar">
-      <span class="ph-title">WAHA Terminated</span>
-      <span class="ph-cnt">${tf.length} pessoas · ${totalWahaAssets} assets</span>
-      <input class="srch" placeholder="Filtrar BMS, nome ou asset..." value="${ts}" oninput="ts=this.value.toLowerCase();tp=0;renderRaw()">
-    </div>
-    <div class="tw"><table><thead><tr><th>BMS</th><th>Nome</th><th>Asset IDs</th><th class="tr">Nº Assets</th></tr></thead><tbody>`;
-  tpaged.forEach(r=>{
-    const ab=r.assets.map(a=>`<span class="badge bx">${a}</span>`).join(' ');
-    h+=`<tr><td><span class="badge bb">${r.bms}</span></td><td>${r.name}</td><td style="max-width:500px;line-height:1.8">${ab||'—'}</td><td class="tr">${r.assets.length}</td></tr>`;
-  });
-  if(!tpaged.length) h+=`<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:1.5rem">Sem resultados</td></tr>`;
-  h+=`</tbody></table></div>`;
-  if(tpages>1) h+=`<div class="pag"><span>${tp*PG+1}–${Math.min(tp*PG+PG,tf.length)} de ${tf.length}</span>
-    <button class="pb" onclick="tp--;renderRaw()" ${tp===0?'disabled':''}>← Ant</button>
-    <button class="pb" onclick="tp++;renderRaw()" ${tp>=tpages-1?'disabled':''}>Seg →</button></div>`;
-  h+=`</div></div><div class="div"></div>`;
-
-  // 5. PC × LOC × LC
-  const colSpan=pcATypes.length*2;
-  h+=`<div class="sec"><div class="sec-lbl">5 · PCs — Life Cycle por Location Type e Asset Type</div>
-  <div class="panel">
-    <div class="ph"><span class="ph-title">PCs com localização válida</span><span class="ph-cnt">${pcLocTotal} assets</span></div>
-    <div class="tw"><table><thead>
-    <tr><th rowspan="2">Location Type</th><th class="tr" rowspan="2">Total</th>`;
-  pcATypes.forEach(a=>{ h+=`<th class="tr" colspan="2" style="border-left:2px solid var(--border2)">${a}</th>`; });
-  h+=`</tr><tr>`;
-  pcATypes.forEach(()=>{ h+=`<th class="tr" style="color:var(--green);border-left:2px solid var(--border2)">≤ 3a</th><th class="tr" style="color:var(--red)">&gt; 3a</th>`; });
-  h+=`</tr></thead><tbody>`;
-  pcLocs.forEach(l=>{
-    const locTot=pcATypes.reduce((s,a)=>s+(S.pc_lc[l][a]?S.pc_lc[l][a].over3+S.pc_lc[l][a].under3+S.pc_lc[l][a].unk:0),0);
-    if(!locTot)return;
-    h+=`<tr><td>${l}</td><td class="tr" style="font-weight:600">${locTot}</td>`;
-    pcATypes.forEach(a=>{
-      const v=S.pc_lc[l][a]||{over3:0,under3:0,unk:0};
-      const tot=v.over3+v.under3+v.unk;
-      const u3P=tot?Math.round(v.under3/tot*100):0;
-      const o3P=tot?Math.round(v.over3/tot*100):0;
-      h+=`<td class="tr" style="color:var(--green);border-left:2px solid var(--border2)">${v.under3}<span style="color:var(--text3);font-size:10px"> (${u3P}%)</span></td>`;
-      h+=`<td class="tr" style="color:var(--red)">${v.over3}<span style="color:var(--text3);font-size:10px"> (${o3P}%)</span></td>`;
-    });
-    h+=`</tr>`;
-  });
-  h+=`<tr style="background:var(--surface2);font-weight:600"><td>Total</td><td class="tr">${pcLocTotal}</td>`;
-  pcATypes.forEach(a=>{
-    const totU=pcLocs.reduce((s,l)=>s+(S.pc_lc[l][a]?S.pc_lc[l][a].under3:0),0);
-    const totO=pcLocs.reduce((s,l)=>s+(S.pc_lc[l][a]?S.pc_lc[l][a].over3:0),0);
-    const atTot=pcLocs.reduce((s,l)=>s+(S.pc_lc[l][a]?S.pc_lc[l][a].over3+S.pc_lc[l][a].under3+S.pc_lc[l][a].unk:0),0);
-    const uP=atTot?Math.round(totU/atTot*100):0;
-    const oP=atTot?Math.round(totO/atTot*100):0;
-    h+=`<td class="tr" style="color:var(--green);border-left:2px solid var(--border2)">${totU}<span style="font-weight:400;color:var(--text3);font-size:10px"> (${uP}%)</span></td>`;
-    h+=`<td class="tr" style="color:var(--red)">${totO}<span style="font-weight:400;color:var(--text3);font-size:10px"> (${oP}%)</span></td>`;
-  });
-  h+=`</tr></tbody></table></div></div></div></div>`;
-
-  document.getElementById('app').innerHTML=h;
-}
-
 function renderKPI(){
   if(KPI.length<2){document.getElementById('app').innerHTML='<div class="state"><div class="ss">Sem dados em RECOVERS KPI.</div></div>';return;}
   const H=KPI[0];
   const allData=toObj(KPI);
-
   function pN(v){
     if(!v&&v!==0)return 0;
-    const s=String(v).replace(/[€\s]/g,''); // remove € and all spaces first
-    // Now either "56306,26" (PT) or "56306.26" (EN) or "56,306.26" (EN with comma thousands)
-    // Detect: if comma exists and only 2 digits after last comma => decimal comma
+    const s=String(v).replace(/[€\s]/g,'');
     const commaIdx=s.lastIndexOf(',');
     const dotIdx=s.lastIndexOf('.');
     let normalized;
-    if(commaIdx>dotIdx){
-      // comma is decimal separator: remove dots (thousands), replace comma with dot
-      normalized=s.replace(/\./g,'').replace(',','.');
-    } else {
-      // dot is decimal separator or no decimal at all: remove commas (thousands)
-      normalized=s.replace(/,/g,'');
-    }
+    if(commaIdx>dotIdx){ normalized=s.replace(/\./g,'').replace(',','.'); }
+    else{ normalized=s.replace(/,/g,''); }
     return parseFloat(normalized)||0;
   }
   function fmtEur(v){return v.toLocaleString('pt-PT',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
-  function fmtPct(v){
-    if(!v&&v!==0)return'—';
-    const n=pN(v);
-    // value might already be 0-100 or 0-1
-    const pct=n>1?n:n*100;
-    return pct.toFixed(0)+'%';
-  }
-  function hasDat(r){
-    // row has data if any numeric column is non-zero
-    return['rescisoes','equipamentos','recuperados','processo'].some(k=>{
-      const col=Object.keys(r).find(h=>h.toLowerCase().includes(k.slice(0,5)));
-      return col&&pN(r[col])>0;
-    });
-  }
-
-  // Identify columns by keyword
   const mCol  = H.find(h=>/m[eê]s|month/i.test(h))||H[0];
   const cResc = H.find(h=>/rescis/i.test(h))||'';
   const cEquip= H.find(h=>/equipam/i.test(h))||'';
@@ -693,12 +470,8 @@ function renderKPI(){
   const cProc = H.find(h=>/processo|em proc/i.test(h))||'';
   const cPct  = H.find(h=>/percent|recupera.*%|%/i.test(h))||'';
   const cVal  = H.find(h=>/valor|€|retid/i.test(h))||'';
-
-  // Only rows with actual data + keep all 12 months for table
   const data12 = allData.filter(r=>(r[mCol]||'').trim());
   const dataWithValues = data12.filter(r=>cResc&&pN(r[cResc])>0);
-
-  // Totals from data with values
   const totResc  = dataWithValues.reduce((s,r)=>s+pN(r[cResc]),0);
   const totEquip = dataWithValues.reduce((s,r)=>s+pN(r[cEquip]),0);
   const totRec   = dataWithValues.reduce((s,r)=>s+pN(r[cRec]),0);
@@ -706,10 +479,7 @@ function renderKPI(){
   const totVal   = dataWithValues.reduce((s,r)=>s+pN(r[cVal]),0);
   const avgPct   = totEquip>0?(totRec/totEquip*100):0;
   const mesesAtivos = dataWithValues.length;
-
   let h='<div class="fade">';
-
-  // ── KPI CARDS ──
   h+=`<div class="sec"><div class="sec-lbl">Totais Acumulados ${new Date().getFullYear()} — ${mesesAtivos} ${mesesAtivos===1?'mês':'meses'} com dados</div>
   <div class="kpi-row">
     <div class="kpi b"><div class="kpi-lbl">Total Rescisões</div><div class="kpi-val">${totResc.toLocaleString('pt-PT')}</div><div class="kpi-sub">rescisões processadas</div></div>
@@ -717,11 +487,9 @@ function renderKPI(){
     <div class="kpi g"><div class="kpi-lbl">Recuperados</div><div class="kpi-val">${totRec.toLocaleString('pt-PT')}</div><div class="kpi-sub">equipamentos recuperados</div></div>
     <div class="kpi a"><div class="kpi-lbl">Em Processo</div><div class="kpi-val">${totProc.toLocaleString('pt-PT')}</div><div class="kpi-sub">ainda em acompanhamento</div></div>
     <div class="kpi ${avgPct>=80?'g':avgPct>=60?'a':'r'}"><div class="kpi-lbl">% Recuperação</div><div class="kpi-val">${avgPct.toFixed(0)}%</div><div class="kpi-sub">taxa global acumulada</div></div>
-    ${cVal?`<div class="kpi g"><div class="kpi-lbl">Valor Retido</div><div class="kpi-val" style="font-size:20px">${fmtEur(totVal)}</div><div class="kki-sub" style="font-size:12px;color:var(--text3);margin-top:4px">valor total recuperado</div></div>`:''}
+    ${cVal?`<div class="kpi g"><div class="kpi-lbl">Valor Retido</div><div class="kpi-val" style="font-size:20px">${fmtEur(totVal)}</div><div class="kpi-sub">valor total recuperado</div></div>`:''}
   </div></div><div class="div"></div>`;
-
-  // ── CHARTS side by side ──
-  const c1='ch1'+Date.now(), c2='ch2'+Date.now();
+  const c1='cht1'+Date.now(), c2='cht2'+Date.now();
   h+=`<div class="sec"><div class="sec-lbl">Evolução Mensal</div>
   <div class="cols2">
     <div class="panel"><div class="ph"><span class="ph-title">Rescisões vs Recuperados vs Em Processo</span></div>
@@ -729,49 +497,35 @@ function renderKPI(){
     <div class="panel"><div class="ph"><span class="ph-title">Taxa de Recuperação (%)</span></div>
       <div style="padding:1rem;height:260px;position:relative"><canvas id="${c2}"></canvas></div></div>
   </div></div>`;
-
   setTimeout(()=>{
     if(CI){try{CI.destroy();}catch(e){}CI=null;}
-    const activeRows=dataWithValues;
-    const labels=activeRows.map(r=>(r[mCol]||'').replace(/^\d+\s*-\s*/,''));
-
-    // Chart 1: bars
+    const labels=dataWithValues.map(r=>(r[mCol]||'').replace(/^\d+\s*-\s*/,''));
     const ctx1=document.getElementById(c1);
     if(ctx1){
       CI=new Chart(ctx1,{type:'bar',data:{labels,datasets:[
-        {label:'Rescisões',data:activeRows.map(r=>pN(r[cResc])),backgroundColor:'#93c5fd',borderRadius:3},
-        {label:'Recuperados',data:activeRows.map(r=>pN(r[cRec])),backgroundColor:'#86efac',borderRadius:3},
-        {label:'Em Processo',data:activeRows.map(r=>pN(r[cProc])),backgroundColor:'#fcd34d',borderRadius:3},
+        {label:'Rescisões',data:dataWithValues.map(r=>pN(r[cResc])),backgroundColor:'#93c5fd',borderRadius:3},
+        {label:'Recuperados',data:dataWithValues.map(r=>pN(r[cRec])),backgroundColor:'#86efac',borderRadius:3},
+        {label:'Em Processo',data:dataWithValues.map(r=>pN(r[cProc])),backgroundColor:'#fcd34d',borderRadius:3},
       ]},options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{position:'top',labels:{font:{family:'DM Sans',size:11},boxWidth:10}}},
-        scales:{x:{grid:{display:false},ticks:{font:{size:11},color:'#9c9b96'}},
-                y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:11},color:'#9c9b96'}}}}});
+        scales:{x:{grid:{display:false},ticks:{size:11,color:'#9c9b96'}},
+                yz{grid:{color:'rgba(0,0,0,0.04)'},ticks:{size:11,color:'#9c9b96"}}}}});
     }
-    // Chart 2: % line
     const ctx2=document.getElementById(c2);
     if(ctx2){
-      const pctData=activeRows.map(r=>{
-        const v=pN(r[cPct]);
-        return v>1?v:v*100;
-      });
+      const pctData=dataWithValues.map(r=>{const v=pN(r[cPct]);return v>1?v:v*100;});
       new Chart(ctx2,{type:'line',data:{labels,datasets:[{
         label:'% Recuperação',data:pctData,
         borderColor:'#3b82f6',backgroundColor:'#3b82f620',
         borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#3b82f6',tension:.3,fill:true
       }]},options:{responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y.toFixed(0)}%`}}},
-        scales:{
-          x:{grid:{display:false},ticks:{font:{size:11},color:'#9c9b96'}},
-          y:{min:0,max:100,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:11},color:'#9c9b96',callback:v=>v+'%'}}
-        }}});
+        scales:{x:{grid:{display:false},ticks:{size:11,color:'#9c9b96'}},yz{min:0,max:100,grid:zcolor:'rgba(0,0,0,0.04)'},ticks:{size:11,color:'#9c9b96',callback:v=>v+'%'}}}}});
     }
   },80);
-
-  // ── MONTHLY TABLE ──
   h+=`<div class="div"></div><div class="sec"><div class="sec-lbl">Tabela Mensal Detalhada</div>
   <div class="panel"><div class="tw"><table>
-  <thead><tr>
-    <th>Mês</th>
+  <thead><tr><th>Mês</th>
     ${cResc?`<th class="tr">Total Rescisões</th>`:''}
     ${cEquip?`<th class="tr">Total Equipamentos</th>`:''}
     ${cRec?`<th class="tr">Recuperados</th>`:''}
@@ -779,42 +533,31 @@ function renderKPI(){
     ${cPct?`<th class="tr">% Recuperação</th>`:''}
     ${cVal?`<th class="tr">Valor Retido (€)</th>`:''}
   </tr></thead><tbody>`;
-
   data12.forEach(r=>{
-    const mes=(r[mCol]||'').trim();
-    if(!mes)return;
+    const mes=(r[[mCol]||'').trim(); if(!mes)return;
     const hasData=cResc&&pN(r[cResc])>0;
     const dimStyle=hasData?'':' style="color:var(--text3)"';
     const dash='<span style="color:var(--text3)">—</span>';
-    const resc =cResc&&pN(r[cResc])>0  ?pN(r[cResc]).toLocaleString('pt-PT'):dash;
+    const resc =cResc&&pN(r[cResc])>0?pN(r[cResc]).toLocaleString('pt-PT'):dash;
     const equip=cEquip&&pN(r[cEquip])>0?pN(r[cEquip]).toLocaleString('pt-PT'):dash;
-    const rec  =cRec&&pN(r[cRec])>0   ?pN(r[cRec]).toLocaleString('pt-PT'):dash;
-    const proc =cProc&&pN(r[cProc])>0 ?pN(r[cProc]).toLocaleString('pt-PT'):dash;
-    const valR =cVal&&pN(r[cVal])>0   ?fmtEur(pN(r[cVal])):dash;
-
-    // % badge
+    const rec  =cRec&&pN(r[cRec])>0?pN(r[cRec]).toLocaleString('pt-PT'):dash;
+    const proc =cProc&&pN(r[cProc])>0?pN(r[cProc]).toLocaleString('pt-PT'):dash;
+    const valR =cVal&&pN(r[cVal])>0?fmtEur(pN(r[cVal])):dash;
     let pctHtml=dash;
     if(cPct&&r[cPct]){
       const pv=pN(r[cPct]);const pct=pv>1?pv:pv*100;
-      if(pct>0){
-        const cls=pct>=80?'bg':pct>=60?'ba':'br';
-        pctHtml=`<span class="badge ${cls}">${pct.toFixed(0)}%</span>`;
-      }
+      if(pct>0){const cls=pct>=80?'bg':pct>=60?'ba':'br';pctHtml=`<span class="badge ${cls}">${pct.toFixed(0)}%</span>`;}
     }
-
     h+=`<tr${dimStyle}><td><strong>${mes}</strong></td>
       ${cResc?`<td class="tr">${resc}</td>`:''}
       ${cEquip?`<td class="tr">${equip}</td>`:''}
       ${cRec?`<td class="tr" style="${hasData?'color:var(--green);font-weight:500':'color:var(--text3)'}">${rec}</td>`:''}
-      ${cProc?`<td class="tr" style="${hasData?'color:var(--amber)':'color:var(--text3)'}">${proc}</td>`:''}
+      ${cProc?`<td class="tr" style="${hasData?'color:var(--amber);font-weight:500':'color:var(--text3)'}">${proc}</td>`:''}
       ${cPct?`<td class="tr">${pctHtml}</td>`:''}
       ${cVal?`<td class="tr" style="${hasData?'font-weight:500':'color:var(--text3)'}">${valR}</td>`:''}
     </tr>`;
   });
-
-  // Totals row
-  h+=`<tr class="mt">
-    <td>TOTAL / MÉDIA</td>
+  h+=`<tr class="mt"><td>TOTAL / MÉDIA</td>
     ${cResc?`<td class="tr">${totResc.toLocaleString('pt-PT')}</td>`:''}
     ${cEquip?`<td class="tr">${totEquip.toLocaleString('pt-PT')}</td>`:''}
     ${cRec?`<td class="tr" style="color:var(--green)">${totRec.toLocaleString('pt-PT')}</td>`:''}
@@ -823,11 +566,10 @@ function renderKPI(){
     ${cVal?`<td class="tr">${fmtEur(totVal)}</td>`:''}
   </tr>`;
   h+=`</tbody></table></div></div></div></div>`;
-
   document.getElementById('app').innerHTML=h;
 }
 
-init();
+inj]it();
 </script>
 </body>
 </html>
