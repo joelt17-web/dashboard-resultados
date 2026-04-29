@@ -135,15 +135,24 @@ const PG=20;
 let CI=null;
 
 async function fetchCSV(url){
-  // Try direct first, then CORS proxy fallback for cross-origin issues
-  try{
-    const r=await fetch(url,{cache:'no-store'});
-    if(r.ok){const t=await r.text();if(t.length>100)return t;}
-  }catch(e){}
-  const proxy='https://corsproxy.io/?'+encodeURIComponent(url);
-  const r2=await fetch(proxy,{cache:'no-store'});
-  if(!r2.ok) throw new Error('Erro ao carregar CSV ('+r2.status+'). Confirma que o ficheiro esta publicado na web via Ficheiro > Publicar na Web > CSV.');
-  return await r2.text();
+  // Try multiple proxies in sequence
+  const proxies=[
+    u=>u, // direct
+    u=>'https://corsproxy.io/?'+encodeURIComponent(u),
+    u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
+    u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u),
+  ];
+  for(const proxy of proxies){
+    try{
+      const r=await fetch(proxy(url),{cache:'no-store'});
+      if(r.ok){
+        const t=await r.text();
+        // validate: must have at least 2 lines and look like CSV
+        if(t.length>200&&t.includes(',')&&t.split('\n').length>2)return t;
+      }
+    }catch(e){}
+  }
+  throw new Error('Não foi possível carregar os dados. Verifica a tua ligação à internet ou tenta mais tarde.');
 }
 
 function parseCSV(text){
